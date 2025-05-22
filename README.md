@@ -43,10 +43,10 @@ Components of Recommender System
 <!--  TODO image of recommendation system infernece design -->
 
 ### Infernece
-![Inference](figures/inference.png "Inference")
+<img src="figures/inference.png" alt="Inference" width="80%">
 
 ### Training & Batch scoring
-![training_and_batch_scoring](figures/training_and_batch_scoring.png "Training & Batch scoring")
+<img src="figures/training_and_batch_scoring.png" alt="Training & Batch scoring" width="80%">
 
 ## References 
 
