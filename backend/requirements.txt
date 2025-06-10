@@ -1,0 +1,15 @@
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+numpy==2.2.6
+
+# Database
+SQLAlchemy==2.0.30
+asyncpg==0.29.0  # Async PostgreSQL driver for SQLAlchemy
+alembic==1.13.1  # (Optional) For database migrations
+
+# Password hashing
+passlib[bcrypt]==1.7.4
+
+# Environment variable support
+python-dotenv==1.0.1
