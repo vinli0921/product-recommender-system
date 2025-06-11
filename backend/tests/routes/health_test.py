@@ -23,9 +23,8 @@ async def test_readiness():
     async def fake_get_db():
         yield FakeSession()
 
-    # ✅ Override the get_db dependency
     app.dependency_overrides = {}
-    from backend.db import get_db  # wherever get_db is defined
+    from backend.db import get_db  
     app.dependency_overrides[get_db] = fake_get_db
 
     transport = ASGITransport(app=app)
@@ -35,5 +34,4 @@ async def test_readiness():
     assert response.status_code == 200
     assert response.json() == {"status": "ready"}
 
-    # ✅ Clean up
     app.dependency_overrides.clear()
