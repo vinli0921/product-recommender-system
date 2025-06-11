@@ -5,7 +5,7 @@ from typing import List, Optional
 from datetime import date
 import numpy as np
 from backend import config
-from backend.routes import auth, products, recommendations, cart, orders, wishlist, feedback
+from backend.routes import auth, products, recommendations, cart, orders, wishlist, feedback, health
 
 app = FastAPI()
 
@@ -22,6 +22,7 @@ app.add_middleware(
 )
 
 # Include Routers
+app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(recommendations.router)
