@@ -104,3 +104,19 @@ kickstart. If screenshots are included, remember to put them in the
    ```bash
    ./venv/bin/uvicorn backend.main:app --reload --port 8080 --env-file env/local.env
    ```
+
+## Run Tests
+
+1. Install dev dependancies
+
+   ```bash
+    pip3 install -r backend/requirements-dev.txt
+   ```
+
+
+2. Run the tests
+
+   ```bash
+   PYTHONPATH=$(pwd) pytest backend
+   ```
+   
