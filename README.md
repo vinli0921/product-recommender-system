@@ -91,9 +91,7 @@ kickstart. If screenshots are included, remember to put them in the
 
 ## Backend
 
-1. Install Dependencies
-
-   Install the dependencies
+1. Create venv & install the dependencies
 
    ```bash
     python3.10 -m venv venv
@@ -101,9 +99,7 @@ kickstart. If screenshots are included, remember to put them in the
     pip3 install -r backend/requirements.txt
    ```
 
-2. Start server
-
-   Start the backend server
+2. Start the backend server (use `local.env` for local development)
 
    ```bash
    ./venv/bin/uvicorn backend.main:app --reload --port 8080 --env-file env/local.env
