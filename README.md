@@ -80,3 +80,31 @@ Red Hat OpenShift Serverless.
 *Section is required. Include the explicit steps needed to deploy your
 kickstart. If screenshots are included, remember to put them in the
 `assets/images` folder.*
+
+## Postgres DB
+
+1. Build and run the compose file
+
+   ```bash
+    podman compose up --build
+   ```
+
+## Backend
+
+1. Install Dependencies
+
+   Install the dependencies
+
+   ```bash
+    python3.10 -m venv venv
+    source venv/bin/activate
+    pip3 install -r backend/requirements.txt
+   ```
+
+2. Start server
+
+   Start the backend server
+
+   ```bash
+   ./venv/bin/uvicorn backend.main:app --reload --port 8080 --env-file env/local.env
+   ```
