@@ -65,11 +65,12 @@ Depend on the scale and speed required, for small amount of users have minimus o
 
 ### Required software 
 
+- Red Hat Authorino Operator (stable update channel, version 1.2.1 or later)
+- Red Hat OpenShift Serverless Operator
+- Red Hat OpenShift Service Mesh Operator
 * Red Hat OpenShift.
 * Red Hat OpenShift AI version 2.2 and above.
 * Dependencies for Single-model server:
-Red Hat OpenShift Service Mesh.
-Red Hat OpenShift Serverless.
 
 ### Required permissions
 
