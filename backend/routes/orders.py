@@ -2,11 +2,15 @@ from fastapi import APIRouter
 from typing import List
 from backend.models import CheckoutRequest, Order
 from datetime import datetime
+from backend.kafka_service import kafka_service
 
 router = APIRouter()
 
 @router.post("/checkout", response_model=Order)
 def checkout(request: CheckoutRequest):
+    for item in request.items:
+        kafka_service.send_interaction(request.user_id, request.)
+    
     return Order(
         order_id=1,
         user_id=request.user_id,

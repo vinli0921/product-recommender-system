@@ -1,6 +1,14 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, datetime
+from enum import Enum
+
+class InteractionType(Enum):
+    POSITIVE_VIEW = 'positive_view'
+    NEGATIVE_VIEW = 'negative_view'
+    CART = 'cart'
+    PURCHASE = 'purchase'
+    RATE = 'rate'
 
 class Product(BaseModel):
     item_id: int
@@ -29,7 +37,8 @@ class Feedback(BaseModel):
     userId: int
     productId: int
     rating: float
-    comment: Optional[str] = None
+    title: Optional[str] = ''
+    comment: Optional[str] = ''
 
 class LoginRequest(BaseModel):
     email: str
