@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from typing import List
-from backend.models import CheckoutRequest, Order, InteractionType
+from models import CheckoutRequest, Order, InteractionType
 from datetime import datetime
-from backend.kafka_service import kafka_service
+from kafka_service import kafka_service
 
 router = APIRouter()
 

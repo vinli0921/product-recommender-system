@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 import numpy as np
-from backend import config
-from backend.routes import auth, products, recommendations, cart, orders, wishlist, feedback, health
+import config
+from routes import auth, products, recommendations, cart, orders, wishlist, feedback, health
 
 app = FastAPI()
 
