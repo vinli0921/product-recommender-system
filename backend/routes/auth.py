@@ -4,6 +4,7 @@ from sqlalchemy.future import select
 from backend.models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
 from backend.models_sql import User, Login
 from backend.db import get_db
+from backend.kafka_service import kafka_service
 from datetime import date
 from passlib.context import CryptContext
 
@@ -24,7 +25,7 @@ async def signup(payload: SignUpRequest, db: AsyncSession = Depends(get_db)):
         age=payload.age,
         gender=payload.gender,
         signup_date=date.today(),
-        preferences = "",
+        preferences = "", # TODO update the real preferences
     )
     db.add(user)
     await db.flush()  # This gives us user.user_id
@@ -37,6 +38,13 @@ async def signup(payload: SignUpRequest, db: AsyncSession = Depends(get_db)):
     )
     db.add(login_entry)
     await db.commit()
+
+    # Send new user event to Kafka
+    kafka_service.send_new_user(
+        user_id=user.user_id,
+        user_name=user.email,  # Using email as username
+        preferences=user.preferences,
+    )
 
     # Convert SQLAlchemy model to Pydantic model
     user_response = UserResponse(

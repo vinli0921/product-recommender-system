@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from typing import List
-from backend.models import CartItem
+from backend.models import CartItem, InteractionType
+from backend.kafka_service import kafka_service
 
 router = APIRouter()
 
@@ -10,6 +11,9 @@ def get_cart(user_id: int):
 
 @router.post("/cart", status_code=204)
 def add_to_cart(item: CartItem):
+    kafka_service.send_interaction(item.user_id, item.product_id, InteractionType.CART)
+    
+    # Do the db logic
     return
 
 @router.put("/cart", status_code=204)
