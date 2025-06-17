@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from typing import List
-from backend.models import Product
-from backend.feast_service import feast_service
+from models import Product
+from feast_service import feast_service
 router = APIRouter()
 
 @router.get("/recommendations/{user_id}", response_model=List[Product])

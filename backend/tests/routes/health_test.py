@@ -2,8 +2,8 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="env/tests.env", override=True)
-from backend.main import app
-from backend.db import get_db
+from main import app
+from db import get_db
 
 
 @pytest.fixture

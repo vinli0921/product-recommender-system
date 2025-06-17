@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from backend.models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
-from backend.models_sql import User, Login
-from backend.db import get_db
-from backend.kafka_service import kafka_service
+from models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
+from models_sql import User, Login
+from db import get_db
+from kafka_service import kafka_service
 from datetime import date
 from passlib.context import CryptContext
 

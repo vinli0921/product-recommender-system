@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from backend.models import Feedback, InteractionType
-from backend.kafka_service import kafka_service
+from models import Feedback, InteractionType
+from kafka_service import kafka_service
 
 router = APIRouter()
 
