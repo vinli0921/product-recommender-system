@@ -106,9 +106,9 @@ tolerations: []
 
 affinity: {}
 
-pipelineJobImage: quay.io/ecosystem-appeng/rec-sys-workflow:0.0.2
+pipelineJobImage: quay.io/ecosystem-appeng/rec-sys-workflow:0.0.3
 frontendImage: quay.io/ecosystem-appeng/rec-sys-ui:0.0.4
-applicationImage: quay.io/ecosystem-appeng/rec-sys-app:0.0.25
+applicationImage: quay.io/ecosystem-appeng/rec-sys-app:0.0.42
 
 dbName: product_recommender_system
 
@@ -159,15 +159,15 @@ kafka:
     - name: controller
       roles: ["controller"]
   topics:
-    - name: positive-interactions
-    - name: negetive-interactions
+    - name: new-users
+    - name: interactions
   connectors:
-    - name: source-connector-positive-interactions
-      topics: positive-interactions
-      tableNameFormat: stream_positive_interaction
-    - name: source-connector-negetive-interactions
-      topics: negetive-interactions
-      tableNameFormat: stream_negative_interaction
+    - name: source-connector-new-users
+      topics: new-users
+      tableNameFormat: new_users
+    - name: source-connector-interactions
+      topics: interactions
+      tableNameFormat: stream_interaction
 
 configure-pipeline:
   notebook:
