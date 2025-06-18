@@ -3,7 +3,7 @@ from httpx import AsyncClient, ASGITransport
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="env/tests.env", override=True)
 from main import app
-from db import get_db
+from database.db import get_db
 
 
 @pytest.fixture

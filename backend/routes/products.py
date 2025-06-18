@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from models import Product
-from kafka_service import kafka_service
+from services.kafka_service import kafka_service
 
 router = APIRouter()
 
