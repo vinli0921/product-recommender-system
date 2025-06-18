@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from typing import List
 from models import CartItem, InteractionType
-from kafka_service import kafka_service
+from services.kafka_service import kafka_service
 
 router = APIRouter()
 

@@ -1,6 +1,6 @@
 from typing import List
 from feast import FeatureStore
-from backend.models import Product, User
+from models import Product, User
 
 class FeastService:
     _instance = None
