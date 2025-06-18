@@ -5,6 +5,17 @@
 
 This section guides you through setting up and running the backend services for the product recommendation system.
 
+### For local development without service dependence
+in the `/services` directory under each service stop the instantiation of the singletons
+```
+feast_service = None # FeastService()
+```
+
+```
+kafka_service = None #KafkaService() 
+```
+
+
 ### Prerequisites
 
 Ensure you have the following installed on your system:
