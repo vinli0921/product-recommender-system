@@ -1,37 +1,24 @@
-import { useState } from "react";
-import {
-  LoginForm,
-  LoginMainFooterBandItem,
-  LoginPage,
-  ListVariant,
-} from "@patternfly/react-core";
-import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import { Link } from "@tanstack/react-router";
+import { useState } from 'react';
+import { LoginForm, LoginMainFooterBandItem, LoginPage, ListVariant } from '@patternfly/react-core';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { Link } from '@tanstack/react-router';
 
 export const SimpleLoginPage: React.FunctionComponent = () => {
   const [showHelperText, setShowHelperText] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const [isValidUsername, setIsValidUsername] = useState(true);
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [isValidPassword, setIsValidPassword] = useState(true);
 
-  const handleUsernameChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string
-  ) => {
+  const handleUsernameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     setUsername(value);
   };
 
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string
-  ) => {
+  const handlePasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     setPassword(value);
   };
 
-  const onLoginButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const onLoginButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     setIsValidUsername(!!username);
     setIsValidPassword(!!password);

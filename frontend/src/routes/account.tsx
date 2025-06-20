@@ -33,13 +33,13 @@ export const Route = createFileRoute("/account")({
 
 const options: TreeViewDataItem[] = [
   {
-    name: "My Account",
-    id: "account",
+    name: 'My Account',
+    id: 'account',
 
     children: [
       {
-        name: "Wishlist",
-        id: "saved-products",
+        name: 'Wishlist',
+        id: 'saved-products',
       },
     ],
     defaultExpanded: true,
@@ -61,10 +61,7 @@ function Account() {
         </SidebarPanel>
         <SidebarContent>
           <PageSection>
-            <Flex
-              direction={{ default: "column" }}
-              spaceItems={{ default: "spaceItemsMd" }}
-            >
+            <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsMd' }}>
               <Wishlist />
             </Flex>
           </PageSection>
