@@ -1,65 +1,24 @@
-import { PageSection, Title } from "@patternfly/react-core";
-import { Carousel } from "./Carousel/carousel";
-import { faker } from "@faker-js/faker";
-import { GalleryView } from "./gallery";
-
-interface ProductData {
-  id: number;
-  title: string;
-  description: string;
-  price: string;
-  imageUrl: string;
-  rating: string;
-}
+import { PageSection, Title } from '@patternfly/react-core';
+import { GalleryView } from './Gallery';
+import { FakerProducts } from './faker-products';
+import { fetchCatalog } from '../services/products';
+import { useQuery } from '@tanstack/react-query';
 
 export function CatalogPage() {
-  function capitalizeFirstLetter(val: string) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-  }
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['catalog'], // A unique key for this query
+    queryFn: fetchCatalog, // The async function to fetch data
+  });
 
-  // Fetch Product Recommendations from backend
-  function createRandomProducts() {
-    const myProduct: ProductData = {
-      id: faker.number.int(),
-      title: capitalizeFirstLetter(
-        faker.word.noun({ length: { min: 5, max: 7 } })
-      ),
-      description: faker.lorem.lines(1),
-      price: faker.finance.amount({ min: 5, max: 20, dec: 2, symbol: "$" }),
-      imageUrl: faker.image.urlLoremFlickr(),
-      rating: faker.finance.amount({ min: 0, max: 5, dec: 2 }),
-    };
-    return myProduct;
-  }
-  const productsRecommended = faker.helpers.multiple(createRandomProducts, {
-    count: 10,
-  });
-  const highlyRecProducts = faker.helpers.multiple(createRandomProducts, {
-    count: 5,
-  });
-  const trendingProducts = faker.helpers.multiple(createRandomProducts, {
-    count: 8,
-  });
+  const products = data ? data : FakerProducts();
 
   return (
     <>
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
-          Product Recommendations
+        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+          Catalog
         </Title>
-      </PageSection>
-      <Carousel products={productsRecommended} />
-      <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
-          Trending Products
-        </Title>
-        <GalleryView products={trendingProducts} />
-      </PageSection>
-      <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
-          Highly Recommended
-        </Title>
-        <Carousel products={highlyRecProducts} />
+        <GalleryView products={products} />
       </PageSection>
     </>
   );
