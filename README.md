@@ -99,22 +99,31 @@ Depend on the scale and speed required, for small amount of users have minimus o
 
 ## Install 
 
-*Section is required. Include the explicit steps needed to deploy your
-kickstart. If screenshots are included, remember to put them in the
-`assets/images` folder.*
+1. Fork and clone the repository:
+   ```bash
+   # Fork via GitHub UI, then:
+   git clone https://github.com/<your-username>/product-recommender-system.git
+   cd product-recommender-system
+   ```
+
+2. Navigate to the helm directory:
+   ```bash
+   cd helm/
+   ```
+
+3. Set the namespace environment variable to define on which namepsace the kickstart will be install:
+   ```bash
+   # Replace <namespace> with your desired namespace
+   export NAMESPACE=<namespace>
+   ```
+
+4. Install using make:
+   ```bash
+   # This will create the namespace and deploy all components
+   make install
+   ```
+
 
 ## Run Tests
 
-1. Install dev dependancies
-
-   ```bash
-    pip3 install -r backend/pyproject-dev.toml
-   ```
-
-
-2. Run the tests
-
-   ```bash
-   PYTHONPATH=$(pwd) pytest backend
-   ```
-   
+TODO
