@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 import random, string
 from datetime import date
-
+from feast import FeatureStore
 from models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
 from database.models_sql import User, Login
 from database.db import get_db
@@ -54,6 +54,9 @@ async def get_current_user(
 # Request model for setting preferences
 class PreferencesRequest(BaseModel):
     preferences: str
+
+class ExistingLoginRequest(BaseModel):
+    user_id: int
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -108,6 +111,7 @@ async def signup(
     )
     return AuthResponse(user=user_response, token=token)
 
+
 @router.post(
     "/login",
     response_model=AuthResponse,
@@ -139,6 +143,53 @@ async def login(
         views=[],
     )
     return AuthResponse(user=user_response, token=token)
+
+@router.post(
+    "/existing-login",
+    response_model=AuthResponse,
+)
+async def existing_login(
+    payload: ExistingLoginRequest,
+):
+    user_id = payload.user_id
+
+    # Ensure this is NOT a 1122-prefixed ID
+    if str(user_id).startswith("1122"):
+        raise HTTPException(status_code=400, detail="This is not an existing user ID")
+
+    # Attempt to fetch from Feast
+    try:
+        store = FeatureStore(repo_path="feature_repo")  # Adjust path if needed
+        features = store.get_online_features(
+            features=[
+                "user_features:age",
+                "user_features:gender",
+                "user_features:preferences"
+            ],
+            entity_rows=[{"user_id": user_id}]
+        ).to_dict()
+    except Exception:
+        raise HTTPException(status_code=500, detail="Error connecting to Feast")
+
+    # Confirm user exists in feature store
+    if not features.get("age") or features["age"][0] is None:
+        raise HTTPException(status_code=401, detail="User not found in feature store")
+
+    # Construct user-like object
+    user_response = UserResponse(
+        user_id=user_id,
+        email="",  # Unknown for existing Feast users
+        age=features["age"][0],
+        gender=features["gender"][0],
+        signup_date=date.today(),  # Could default or skip
+        preferences=features["preferences"][0] or "",
+        views=[],
+    )
+
+    token = create_access_token(subject=str(user_id))
+
+    return AuthResponse(user=user_response, token=token)
+
 
 @router.post(
     "/preferences",
