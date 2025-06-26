@@ -10,7 +10,7 @@ from feast import FeatureStore
 from models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
 from database.models_sql import User, Login
 from database.db import get_db
-from services.kafka_service import kafka_service  # Kafka send (re-enable when broker is available)
+from services.kafka_service import kafka_service  # Kafka send
 from services.security import (
     hash_password,
     verify_password,
@@ -96,6 +96,13 @@ async def signup(
     db.add(login_entry)
     await db.commit()
     await db.refresh(user)
+
+    # Send Kafka new-user event
+    kafka_service.send_new_user(
+        user_id=user.user_id,
+        user_name=user.email,
+        preferences=user.preferences,
+    )
 
     # Issue JWT
     token = create_access_token(subject=str(user.user_id))
@@ -209,12 +216,12 @@ async def set_preferences(
     await db.commit()
     await db.refresh(user)
 
-    # Send Kafka event after preferences chosen (commented until broker ready)
-  #  kafka_service.send_new_user(
-   #         user_id=user.user_id,
-    #        user_name=user.email,
-     #       preferences=user.preferences,
-      #  )
+    # Send Kafka event after preferences chosen
+    kafka_service.send_new_user(
+        user_id=user.user_id,
+        user_name=user.email,
+        preferences=user.preferences,
+    )
 
     # Issue a fresh token (or reuse existing)
     new_token = token
