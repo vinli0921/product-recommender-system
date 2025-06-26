@@ -198,6 +198,29 @@ env:
   - name: KAFKA_SERVICE_ADDR
     value: rec-sys-cluster-kafka-bootstrap:9092
 
+minio:
+  env:
+    - name: MINIO_HOST
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: host
+    - name: MINIO_PORT
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: port
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: accesskey
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: secretkey
+
 feast:
   project: feast_rec_sys
   secret: feast-feast-rec-sys-registry-tls
