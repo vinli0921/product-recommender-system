@@ -47,7 +47,6 @@ class FeastService:
         user_encoder = EntityTower(json_config['users_num_numerical'], json_config['users_num_categorical'])
         user_encoder.load_state_dict(torch.load('/tmp/user-encoder.pth'))
         # Clean up the temporary folder
-        shutil.rmtree("/tmp")
         
         return user_encoder
     
