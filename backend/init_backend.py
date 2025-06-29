@@ -1,14 +1,9 @@
-# backend/database/create_tables.py
+"""
+This script is used for initilizing the backend database.
+This should be run by a job once per cluster.
+"""
+
 import asyncio
-import os
-from pathlib import Path
-from dotenv import load_dotenv
-
-# Load environment variables before importing engine
-env_path = Path(__file__).resolve().parents[2] / "env" / "local.env"
-load_dotenv(dotenv_path=env_path)
-
-# Now import the database engine with the correct DATABASE_URL
 from database.db import engine
 from database.models_sql import Base
 
