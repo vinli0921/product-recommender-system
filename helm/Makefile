@@ -43,9 +43,6 @@ depend:
 	@echo "Updating Helm dependencies"
 	@helm dependency update $(HELM_CHART) &> /dev/null
 
-.PHONY: list-models
-list-models: depend
-	@helm template dummy-release $(HELM_CHART) --set llm-service._debugListModels=true | grep ^model:
 
 .PHONY: install
 install: namespace depend
