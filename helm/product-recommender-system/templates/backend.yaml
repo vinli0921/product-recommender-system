@@ -157,3 +157,74 @@ spec:
           averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "product-recommender-system.fullname" . }}-db-init-2
+  labels:
+    {{- include "product-recommender-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db-init
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    spec:
+      initContainers:
+      - name: wait-for-feast-apply
+        image: registry.redhat.io/openshift4/ose-cli:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          until oc get job feast-apply-job -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep "True"; do
+            echo "Waiting for feast-apply-job to complete..."
+            sleep 10
+          done
+      containers:
+      - name: db-init
+        image: "{{ .Values.backendImage }}"
+        imagePullPolicy: {{ .Values.backend.pullPolicy }}
+        command: ["python"]
+        args: ["create_tables.py"]
+        workingDir: /app
+        env:
+          {{- if .Values.env }}
+          {{- toYaml .Values.env | nindent 12 }}
+          {{- end }}
+          {{- if .Values.backend.additionalEnv }}
+          {{- toYaml .Values.backend.additionalEnv | nindent 12 }}
+          {{- end }}
+          {{- if .Values.minio.env }}
+          {{- toYaml .Values.minio.env | nindent 12 }}
+          {{- end }}
+          {{- include "product-recommender-system.feastEnv" . | nindent 12 }}
+        {{- if or .Values.backend.additionalVolumeMounts .Values.feast.secret }}
+        volumeMounts:
+          {{- with .Values.backend.additionalVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.feast.secret }}
+          - name: tls-secret
+            mountPath: /app/feature_repo/secrets/tls.crt
+            subPath: tls.crt
+            readOnly: true
+          {{- end }}
+        {{- end }}
+      restartPolicy: OnFailure
+      {{- if or .Values.backend.additionalVolumes .Values.feast.secret }}
+      volumes:
+        {{- with .Values.backend.additionalVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.feast.secret }}
+        - name: tls-secret
+          secret:
+            secretName: {{ .Values.feast.secret }}
+            items:
+            - key: tls.crt
+              path: tls.crt
+        {{- end }}
+      {{- end }}
