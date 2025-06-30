@@ -161,7 +161,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "product-recommender-system.fullname" . }}-db-init-2
+  name: {{ include "product-recommender-system.fullname" . }}-db-init
   labels:
     {{- include "product-recommender-system.labels" . | nindent 4 }}
     app.kubernetes.io/component: db-init
@@ -188,7 +188,7 @@ spec:
         image: "{{ .Values.backendImage }}"
         imagePullPolicy: {{ .Values.backend.pullPolicy }}
         command: ["python"]
-        args: ["create_tables.py"]
+        args: ["init_backend.py"]
         workingDir: /app
         env:
           {{- if .Values.env }}
