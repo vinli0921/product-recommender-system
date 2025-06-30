@@ -8,7 +8,7 @@ import json
 import shutil
 from public.models.entity_tower import EntityTower
 from public.models.data_util import data_preproccess
-from datetime import date, datetime
+from datetime import datetime, timezone
 import pandas as pd
 
 class FeastService:
@@ -54,19 +54,21 @@ class FeastService:
     
     def get_all_existing_users(self) -> List[dict]:
         try:
-            parquet_path = "public/feature_repo/data/recommendation_interactions.parquet"
-            interactions_df = pd.read_parquet(parquet_path)
-            user_ids = interactions_df['user_id'].unique().tolist()
+            parquet_path = "data/recommendation_users.parquet"
+            users_df = pd.read_parquet(parquet_path)
+            user_ids = users_df['user_id'].unique().tolist()
 
             entity_df = pd.DataFrame({
                 'user_id': user_ids,
-                'event_timestamp': [datetime.utcnow()] * len(user_ids)
+                'event_timestamp': [datetime.now(timezone.utc)] * len(user_ids)
             })
 
             user_df = self.store.get_historical_features(
                 entity_df=entity_df,
                 features=self.user_service
             ).to_df()
+            
+            print("Fetched all users")
 
             return user_df.to_dict(orient="records")
 

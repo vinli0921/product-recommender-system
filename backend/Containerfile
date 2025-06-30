@@ -8,7 +8,7 @@ WORKDIR /app/
 RUN dnf update -y
 
 RUN pip3 install uv
-COPY backend/pyproject.toml pyproject.toml
+COPY pyproject.toml pyproject.toml
 RUN uv pip install -r pyproject.toml
 
 # Copy the rest of the app
@@ -17,7 +17,7 @@ COPY . .
 # Copy the models and feature store from the algo-repo
 COPY --from=algo-repo /app/models/ public/models/
 COPY --from=algo-repo /app/feature_repo/feature_store.yaml public/feature_store.yaml
-COPY --from=algo-repo /app/feature_repo/data/recommendation_interactions.parquet public/feature_repo/data/recommendation_interactions.parquet
+COPY --from=algo-repo /app/feature_repo/data /app/data
 
 RUN chmod -R +r . && ls -la
 
