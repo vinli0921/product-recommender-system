@@ -253,6 +253,11 @@ configure-pipeline:
   notebook:
     create: false
 
+strimzi-kafka-operator:
+  extraEnvs:
+    - name: STRIMZI_USE_FINALIZERS
+      value: "false"
+
 # Model Registry Configuration
 modelRegistry:
   enabled: true
