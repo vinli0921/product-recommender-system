@@ -50,6 +50,25 @@ class FeastService:
         
         return user_encoder
     
+    def get_all_existing_users(self) -> List[dict]:
+        try:
+            # Get the FeatureView object
+            user_fv = self.store.get_feature_view("user_features")
+            
+            # Load the source data (usually a DataFrame from file or DB)
+            df = user_fv.input.to_df()
+
+            # Drop duplicates just in case
+            df = df.drop_duplicates(subset="user_id")
+
+            # Return as list of dicts
+            return df.to_dict(orient="records")
+        
+        except Exception as e:
+            print(f"Failed to fetch users from feature view: {e}")
+            return []
+
+    
     def load_items_existing_user(self, user_id: int) -> List[Product]:
         suggested_item_ids = self.store.get_online_features(
             features=self.store.get_feature_service('user_top_k_items'),
@@ -101,3 +120,4 @@ class FeastService:
         return suggested_item
 # Initilaize the service
 feast_service = FeastService()
+

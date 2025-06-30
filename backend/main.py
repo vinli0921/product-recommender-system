@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
-from routes import auth, products, recommendations, cart, orders, wishlist, feedback, health, interactions
+from routes import auth, products, recommendations, cart, orders, wishlist, feedback, health, interactions, preferences
 # from routes import test
 
 app = FastAPI()
@@ -20,6 +20,7 @@ app.add_middleware(
 
 # Include Routers
 # app.include_router(test.router)
+app.include_router(preferences.router)
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(interactions.router)
