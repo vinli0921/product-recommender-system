@@ -6,6 +6,7 @@ This should be run by a job once per cluster.
 import asyncio
 from database.db import engine
 from database.models_sql import Base
+from database.fetch_feast_users import seed_users
 
 async def create_tables():
     async with engine.begin() as conn:
@@ -14,5 +15,10 @@ async def create_tables():
         # Create fresh schema with updated types
         await conn.run_sync(Base.metadata.create_all)
 
+
+async def setup_all():
+    await create_tables()
+    await seed_users()
+
 if __name__ == "__main__":
-    asyncio.run(create_tables())
+    asyncio.run(setup_all())

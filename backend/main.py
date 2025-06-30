@@ -23,13 +23,13 @@ app.add_middleware(
 app.include_router(preferences.router)
 app.include_router(health.router)
 app.include_router(auth.router)
-app.include_router(interactions.router)
+#app.include_router(interactions.router)
 app.include_router(recommendations.router)
-app.include_router(products.router)
-app.include_router(cart.router)
-app.include_router(orders.router)
-app.include_router(wishlist.router)
-app.include_router(feedback.router)
+#app.include_router(products.router)
+#app.include_router(cart.router)
+#app.include_router(orders.router)
+#app.include_router(wishlist.router)
+#app.include_router(feedback.router)
 
 categories = ['Electronics', 'Books', 'Clothing', 'Home', 'Sports']
 subcategories = {
