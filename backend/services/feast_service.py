@@ -1,6 +1,7 @@
 from typing import List
 from feast import FeatureStore
 from models import Product, User
+from service.dataset_provider import LocalDatasetProvider
 import os
 from minio import Minio
 import torch
@@ -26,6 +27,7 @@ class FeastService:
             self._initialized = True
             self.user_encoder = self._load_user_encoder()
             self.user_service = self.store.get_feature_service("user_service")
+            self.dataset_provider = LocalDatasetProvider(self.store)
 
     def _load_user_encoder(self):
         minio_client = Minio(
@@ -54,22 +56,8 @@ class FeastService:
     
     def get_all_existing_users(self) -> List[dict]:
         try:
-            parquet_path = "data/recommendation_users.parquet"
-            users_df = pd.read_parquet(parquet_path)
-            user_ids = users_df['user_id'].unique().tolist()
-
-            entity_df = pd.DataFrame({
-                'user_id': user_ids,
-                'event_timestamp': [datetime.now(timezone.utc)] * len(user_ids)
-            })
-
-            user_df = self.store.get_historical_features(
-                entity_df=entity_df,
-                features=self.user_service
-            ).to_df()
-            
+            user_df = self.dataset_provider.user_df()
             print("Fetched all users")
-
             return user_df.to_dict(orient="records")
 
         except Exception as e:
