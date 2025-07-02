@@ -29,6 +29,22 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{/*initContainers:
+        - name: wait-until-model-training-workflow
+          image: postgres:15-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT 1 FROM model_version LIMIT 1" > /dev/null 2>&1; do
+                echo "Waiting for model_version table..."
+                sleep 2
+              done
+              echo "model_version table is ready!"
+          env:
+            {{- if .Values.env }}
+            {{- toYaml .Values.env | nindent 12 }}
+            {{- end }}*/}}
       containers:
         - name: {{ .Chart.Name }}-backend
           image: "{{ .Values.backendImage }}"
