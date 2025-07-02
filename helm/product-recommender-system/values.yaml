@@ -57,6 +57,62 @@ service:
   port: 80
   targetPort: 8080
 
+# Backend specific configuration
+backend:
+  # Service configuration for the backend
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+  
+  # Pod restart configuration
+  restartPolicy: Always
+  backoffLimit: 12
+  
+  # Health check configuration
+  healthCheck:
+    livenessProbe:
+      path: /health
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+    readinessProbe:
+      path: /health
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+  
+  # Resource configuration for the backend
+  resources:
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+  
+  # Additional environment variables specific to backend
+  additionalEnv:
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: pgvector
+          key: uri
+  # - name: EXAMPLE_VAR
+  #   value: "example-value"
+  
+  # Additional volume mounts specific to backend
+  additionalVolumeMounts: []
+  # - name: config-volume
+  #   mountPath: /etc/config
+  
+  # Additional volumes specific to backend
+  additionalVolumes: []
+  # - name: config-volume
+  #   configMap:
+  #     name: backend-config
+  pullPolicy: Always
+
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -106,9 +162,10 @@ tolerations: []
 
 affinity: {}
 
-pipelineJobImage: quay.io/ecosystem-appeng/rec-sys-workflow:0.0.4
+pipelineJobImage: quay.io/ecosystem-appeng/rec-sys-workflow:0.0.6b
 frontendImage: quay.io/ecosystem-appeng/rec-sys-ui:0.0.4
-applicationImage: quay.io/ecosystem-appeng/rec-sys-app:0.0.42
+applicationImage: quay.io/ecosystem-appeng/rec-sys-app:0.0.44
+backendImage: quay.io/ikatav/rec-sys-backend:0.0.1b
 
 dbName: product_recommender_system
 
@@ -141,6 +198,29 @@ env:
   - name: KAFKA_SERVICE_ADDR
     value: rec-sys-cluster-kafka-bootstrap:9092
 
+minio:
+  env:
+    - name: MINIO_HOST
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: host
+    - name: MINIO_PORT
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: port
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: accesskey
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ds-pipeline-s3-dspa
+          key: secretkey
+
 feast:
   project: feast_rec_sys
   secret: feast-feast-rec-sys-registry-tls
@@ -172,6 +252,11 @@ kafka:
 configure-pipeline:
   notebook:
     create: false
+
+strimzi-kafka-operator:
+  extraEnvs:
+    - name: STRIMZI_USE_FINALIZERS
+      value: "false"
 
 # Model Registry Configuration
 modelRegistry:

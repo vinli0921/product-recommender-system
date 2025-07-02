@@ -1,52 +1,95 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
-from database.models_sql import User, Login
-from database.db import get_db
-from services.kafka_service import kafka_service
+from pydantic import BaseModel
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+import random, string
 from datetime import date
-from passlib.context import CryptContext
+from models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
+from database.models_sql import User
+from database.db import get_db
+from services.kafka_service import kafka_service  # Kafka send
+from services.security import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    SECRET_KEY,
+    ALGORITHM,
+)
 
-router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# OAuth2 scheme for Bearer token
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-@router.post("/signup", response_model=AuthResponse)
-async def signup(payload: SignUpRequest, db: AsyncSession = Depends(get_db)):
-    # Check if email already exists
-    result = await db.execute(select(Login).where(Login.email == payload.email))
-    existing_login = result.scalar_one_or_none()
-    if existing_login:
-        raise HTTPException(status_code=400, detail="Email already registered")
+# Utility: generate a 27-digit user ID
+def generate_user_id() -> str:
+    return ''.join(random.choices(string.digits, k=27))
 
-    # Create the user
+# Dependency: get current user from JWT
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_db),
+) -> User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        sub = payload.get("sub")
+        if sub is None:
+            raise credentials_exception
+        user_id = int(sub)
+    except (JWTError, ValueError):
+        raise credentials_exception
+    result = await db.execute(select(User).where(User.user_id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise credentials_exception
+    return user
+
+router = APIRouter(prefix="/auth", tags=["auth"])
+
+@router.post(
+    "/signup",
+    response_model=AuthResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def signup(
+    payload: SignUpRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    # Prevent duplicates
+    result = await db.execute(select(User).where(User.email == payload.email))
+    if result.scalar_one_or_none():
+        raise HTTPException(400, "Email already registered")
+
+    # Create user with generated ID
+    new_id = generate_user_id()
     user = User(
+        user_id=new_id,
         email=payload.email,
         age=payload.age,
         gender=payload.gender,
         signup_date=date.today(),
-        preferences = "", # TODO update the real preferences
+        preferences="",
+        hashed_password=hash_password(payload.password),
     )
     db.add(user)
-    await db.flush()  # This gives us user.user_id
-
-    # Store hashed password in login table
-    login_entry = Login(
-        user_id=user.user_id,
-        email=payload.email,
-        hashed_password=pwd_context.hash(payload.password),
-    )
-    db.add(login_entry)
     await db.commit()
+    await db.refresh(user)
 
-    # Send new user event to Kafka
+    # Send Kafka new-user event
     kafka_service.send_new_user(
         user_id=user.user_id,
-        user_name=user.email,  # Using email as username
+        user_name=user.email,
         preferences=user.preferences,
     )
 
-    # Convert SQLAlchemy model to Pydantic model
+    # Issue JWT
+    token = create_access_token(subject=str(user.user_id))
+
     user_response = UserResponse(
         user_id=user.user_id,
         email=user.email,
@@ -54,31 +97,27 @@ async def signup(payload: SignUpRequest, db: AsyncSession = Depends(get_db)):
         gender=user.gender,
         signup_date=user.signup_date,
         preferences=user.preferences,
-        views=[]
+        views=[],
     )
-    return AuthResponse(user=user_response, token="signup-token-placeholder")
+    return AuthResponse(user=user_response, token=token)
 
-@router.post("/login", response_model=AuthResponse)
-async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
-    # Step 1: Find login entry by email
-    result = await db.execute(select(Login).where(Login.email == payload.email))
-    login_entry = result.scalar_one_or_none()
 
-    if not login_entry:
+@router.post(
+    "/login",
+    response_model=AuthResponse,
+)
+async def login(
+    payload: LoginRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    # Check credentials
+    result = await db.execute(select(User).where(User.email == payload.email))
+    user = result.scalar_one_or_none()
+    if not user or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    # Step 2: Check password
-    if not pwd_context.verify(payload.password, login_entry.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    token = create_access_token(subject=str(user.user_id))
 
-    # Step 3: Retrieve user record using user_id from login
-    user_result = await db.execute(select(User).where(User.user_id == login_entry.user_id))
-    user = user_result.scalar_one_or_none()
-
-    if not user:
-        raise HTTPException(status_code=500, detail="User record missing")
-
-    # Step 4: Build response
     user_response = UserResponse(
         user_id=user.user_id,
         email=user.email,
@@ -86,8 +125,6 @@ async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
         gender=user.gender,
         signup_date=user.signup_date,
         preferences=user.preferences,
-        views=[]
+        views=[],
     )
-
-    return AuthResponse(user=user_response, token="login-token-placeholder")
-
+    return AuthResponse(user=user_response, token=token)

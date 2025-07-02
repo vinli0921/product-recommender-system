@@ -1,3 +1,5 @@
+FROM quay.io/ecosystem-appeng/rec-sys-app:0.0.43 AS algo-repo
+
 FROM registry.access.redhat.com/ubi9/python-311
 
 USER root
@@ -9,8 +11,21 @@ RUN pip3 install uv
 COPY pyproject.toml pyproject.toml
 RUN uv pip install -r pyproject.toml
 
+# Copy the rest of the app
 COPY . .
+
+#TODO make sure feast fetching is possible
+# Copy the models and feature store from the algo-repo
+COPY --from=algo-repo /app/models/ public/models/
+COPY --from=algo-repo /app/service/ public/service/
+COPY --from=algo-repo /app/feature_repo/feature_store.yaml public/feature_store.yaml
+COPY --from=algo-repo /app/feature_repo/data /app/data
+
 RUN chmod -R +r . && ls -la
 
+ENV HF_HOME=/hf_cache
+RUN mkdir -p /hf_cache && \
+    chmod -R 777 /hf_cache
+
 EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

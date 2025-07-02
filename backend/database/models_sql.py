@@ -1,18 +1,25 @@
 from sqlalchemy import Integer, String, Date, Float, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 import datetime
+from sqlalchemy.types import TypeDecorator, VARCHAR
 
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = "users"
-    user_id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
-    age: Mapped[int] = mapped_column(Integer)
-    gender: Mapped[str] = mapped_column(String)
-    signup_date: Mapped[Date] = mapped_column(Date)
-    preferences: Mapped[str] = mapped_column(String)
+    
+    user_id: Mapped[str] = mapped_column(String(27), primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String, unique=True, index=True)
+    password: Mapped[str] = mapped_column(String, nullable=True)  # raw (used only for mock data/gen)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=True)
+    age: Mapped[int] = mapped_column(Integer, nullable=True)
+    gender: Mapped[str] = mapped_column(String, nullable=True)
+    signup_date: Mapped[Date] = mapped_column(Date, nullable=True)
+    preferences: Mapped[str] = mapped_column(String, nullable=True)
 
+
+'''
 class Product(Base):
     __tablename__ = "products"
     item_id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -57,12 +64,6 @@ class WishlistItem(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
     product_id: Mapped[int] = mapped_column(ForeignKey("products.item_id"))
 
-class Login(Base):
-    __tablename__ = "logins"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"), unique=True)
-    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
 
 class Interactions(Base):
     __tablename__ = "interactions"
@@ -78,3 +79,5 @@ class NegInteractions(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
     product_id: Mapped[int] = mapped_column(ForeignKey("products.item_id"))
     rating: Mapped[float] = mapped_column(Float)    
+
+'''

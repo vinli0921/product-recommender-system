@@ -21,7 +21,6 @@ stringData:
     # sslkey_path: /var/lib/postgresql/certs/tls.key
     # sslcert_path: /var/lib/postgresql/certs/tls.crt
     # sslrootcert_path: system
-
 ---
 apiVersion: feast.dev/v1alpha1
 kind: FeatureStore
@@ -116,7 +115,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - ./entry_point.sh && cd feature_repo && feast apply
+            - cd feature_repo && feast apply
           imagePullPolicy: IfNotPresent
           {{- with .Values.env }}
           env:
