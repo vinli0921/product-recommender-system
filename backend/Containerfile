@@ -17,6 +17,7 @@ COPY . .
 #TODO make sure feast fetching is possible
 # Copy the models and feature store from the algo-repo
 COPY --from=algo-repo /app/models/ public/models/
+COPY --from=algo-repo /app/service/ public/service/
 COPY --from=algo-repo /app/feature_repo/feature_store.yaml public/feature_store.yaml
 COPY --from=algo-repo /app/feature_repo/data /app/data
 

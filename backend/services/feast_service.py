@@ -1,7 +1,6 @@
 from typing import List
 from feast import FeatureStore
 from models import Product, User
-from service.dataset_provider import LocalDatasetProvider
 import os
 from minio import Minio
 import torch
@@ -9,6 +8,7 @@ import json
 import shutil
 from public.models.entity_tower import EntityTower
 from public.models.data_util import data_preproccess
+from public.service.dataset_provider import LocalDatasetProvider
 from datetime import datetime, timezone
 import pandas as pd
 
