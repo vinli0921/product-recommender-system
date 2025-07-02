@@ -50,7 +50,7 @@ install: namespace depend
 	@echo "Installing $(HELM_CHART) helm chart"
 	@helm -n $(NAMESPACE) upgrade --install $(HELM_CHART) $(HELM_CHART) -n $(NAMESPACE) \
 		$(PGVECTOR_ARGS) \
-		$(EXTRA_HELM_ARGS) --set strimzi-kafka-operator.createGlobalResources=false
+		$(EXTRA_HELM_ARGS) --set strimzi-kafka-operator.createGlobalResources=false --timeout 300m
 	@echo "Waiting for model services and llamastack to deploy. It may take around 10-15 minutes depending on the size of the model..."
 	@oc rollout status deploy
 	@echo "$(HELM_CHART) installed successfully"
@@ -63,6 +63,7 @@ uninstall:
 	@echo "Removing pgvector and minio PVCs from $(NAMESPACE)"
 	@oc get pvc -n $(NAMESPACE) -o custom-columns=NAME:.metadata.name | grep -E '^(pg|minio)-data' | xargs -I {} oc delete pvc -n $(NAMESPACE) {} ||:
 	@echo "Deleting remaining pods in namespace $(NAMESPACE)"
+	@oc delete jobs -n $(NAMESPACE) --all
 	@oc delete pods -n $(NAMESPACE) --all
 	@echo "Checking for any remaining resources in namespace $(NAMESPACE)..."
 	@echo "If you want to completely remove the namespace, run: oc delete project $(NAMESPACE)"

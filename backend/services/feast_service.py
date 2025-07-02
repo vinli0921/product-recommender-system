@@ -29,6 +29,21 @@ class FeastService:
             self.user_service = self.store.get_feature_service("user_service")
             self.dataset_provider = LocalDatasetProvider(self.store)
 
+    def _load_model_version(self):
+        from sqlalchemy import text
+        from sqlalchemy import create_engine
+
+        # Create database connection
+        database_url = os.getenv('DATABASE_URL')
+        engine = create_engine(database_url)
+        
+        with engine.connect() as connection:
+            # Query the latest version
+            result = connection.execute(text("SELECT version FROM model_version ORDER BY updated_at DESC LIMIT 1"))
+            version = result.fetchone()[0]
+            return version
+
+
     def _load_user_encoder(self):
         minio_client = Minio(
             endpoint=os.getenv('MINIO_HOST', "endpoint") + \
@@ -37,10 +52,10 @@ class FeastService:
             secret_key=os.getenv('MINIO_SECRET_KEY', "secret-key"),
             secure=False  # Set to True if using HTTPS
         )
-        
+        model_version = self._load_model_version()
         bucket_name = "user-encoder"
-        object_name = "user-encoder.pth"
-        configuration = 'user-encoder-config.json'
+        object_name = f"user-encoder-{model_version}.pth"
+        configuration = f'user-encoder-config-{model_version}.json'
         
         # Download the model file from MinIO
         minio_client.fget_object(bucket_name, object_name, "/tmp/user-encoder.pth")

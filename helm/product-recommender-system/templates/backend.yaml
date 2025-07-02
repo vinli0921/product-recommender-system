@@ -29,6 +29,18 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      initContainers:
+        - name: wait-for-db-init
+          image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until oc get job product-recommender-system-db-init -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep "True"; do
+                echo "Waiting for db-init job to complete..."
+                sleep 5
+              done
+              echo "db-init job completed successfully!"
       containers:
         - name: {{ .Chart.Name }}-backend
           image: "{{ .Values.backendImage }}"
@@ -173,16 +185,21 @@ spec:
   template:
     spec:
       initContainers:
-      - name: wait-for-feast-apply
-        image: registry.redhat.io/openshift4/ose-cli:latest
-        command:
-        - /bin/sh
-        - -c
-        - |
-          until oc get job feast-apply-job -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep "True"; do
-            echo "Waiting for feast-apply-job to complete..."
-            sleep 10
-          done
+        - name: wait-until-model-training-workflow
+          image: postgres:15-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT 1 FROM model_version LIMIT 1" > /dev/null 2>&1; do
+                echo "Waiting for model_version table..."
+                sleep 2
+              done
+              echo "model_version table is ready!"
+          env:
+            {{- if .Values.env }}
+            {{- toYaml .Values.env | nindent 12 }}
+            {{- end }}
       containers:
       - name: db-init
         image: "{{ .Values.backendImage }}"
