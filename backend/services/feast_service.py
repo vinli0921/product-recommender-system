@@ -27,7 +27,7 @@ class FeastService:
             self._initialized = True
             self.user_encoder = self._load_user_encoder()
             self.user_service = self.store.get_feature_service("user_service")
-            self.dataset_provider = LocalDatasetProvider(self.store)
+            self.dataset_provider = LocalDatasetProvider(self.store, data_dir='public/data')
 
     def _load_model_version(self):
         from sqlalchemy import text

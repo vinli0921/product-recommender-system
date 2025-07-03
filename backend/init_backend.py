@@ -18,7 +18,7 @@ async def create_tables():
 
 async def setup_all():
     await create_tables()
-    await seed_users()
+    # await seed_users()
 
 if __name__ == "__main__":
     asyncio.run(setup_all())
