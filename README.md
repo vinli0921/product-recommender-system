@@ -30,7 +30,7 @@ To find products in the application you can do a:
 Components of Recommender System
 
 ### Data Proprocessing
-<img src="figures/Data_preprocessing_pipeline.drawio.png" alt="Inference" width="80%">
+<img src="figures/data_processing_pipeline.drawio.png" alt="Inference" width="80%">
 
 ### Training & Batch scoring
 
@@ -49,7 +49,7 @@ Reorders candidates according to business logic and priorities.
 * Feast takes the Raw data (item table, user table, interaction table) and stores the items, users, and interactions as Feature Views.
 * Using the Two-Tower architecture technique, we train the item and user encoders based on the existing user-item interactions.
 
-<img src="figures/training_and_batch_scoring.png" alt="Training & Batch scoring" width="80%">
+<img src="figures/training_and_batch_scoring.drawio.png" alt="Training & Batch scoring" width="80%">
 
 #### Batch scoring
 * After completing the training of the Encoders, embed all items and users, then push them in the PGVector database as embedding.
@@ -65,7 +65,7 @@ Reorders candidates according to business logic and priorities.
 * The new users will be embedded into a vector representation.
 * The user vector will do a similarity search from the EDB PGVector to get the top k suggested items
 
-<img src="figures/Inference.png" alt="Inference" width="80%">
+<img src="figures/Inference.drawio.png" alt="Inference" width="80%">
 
 ### Search by Text & Search by Image
 1. Embed the user query into embeddings.
@@ -125,6 +125,24 @@ Depend on the scale and speed required, for small amount of users have minimus o
    make install
    ```
 
+* Or installing and defining namespace together:
+   ```bash
+   # Replace <namespace> with your desired namespace and install in one command
+   make install NAMESPACE=<namespace>
+   ```
+
+## Uninstall 
+To uninstall the recommender system and clean up resources:
+
+1. Navigate to the helm directory:
+   ```bash
+   cd helm/
+   ```
+
+2. Uninstalling with namespace specified:
+   ```bash
+   # Replace <namespace> with your namespace
+   make uninstall NAMESPACE=<namespace>
 
 ## Run Tests
 
