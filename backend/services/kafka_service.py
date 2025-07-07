@@ -27,7 +27,7 @@ class KafkaService:
             "type": "struct",
             "fields": [{
                 "field": "user_id",
-                "type": "string",  # ✅ Changed from int32 to string
+                "type": "string", 
                 "optional": False,
             }, {
                 "field": "item_id",
@@ -100,7 +100,7 @@ class KafkaService:
         """Send an interaction event to Kafka"""
         schema = self._build_interaction_schema()
         interaction = {
-            'user_id': str(user_id),  # ✅ Explicit cast to string
+            'user_id': str(user_id),  
             'item_id': item_id,
             'timestamp': datetime.now().isoformat(" "),
             'interaction_type': interaction_type,
