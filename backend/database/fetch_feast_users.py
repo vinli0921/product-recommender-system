@@ -21,17 +21,19 @@ def generate_password(length=10) -> str:
 async def seed_users():
     users = feast_service.get_all_existing_users()
 
-    async for db in get_db():  # Correct usage
+    async for db in get_db():
         for row in users:
-            user_id = int(row["user_id"])
-            if len(str(user_id)) == 27:  # skip new users
+            user_id = str(row["user_id"])  # Treat user_id as string
+
+            # Skip new users: 27-digit numeric strings only
+            if user_id.isdigit() and len(user_id) == 27:
                 continue
 
             result = await db.execute(select(User).where(User.user_id == user_id))
             if result.scalar_one_or_none():
                 continue
 
-            email = generate_email(str(user_id))
+            email = generate_email(user_id)
             password = generate_password()
 
             print(f"Seeding user: {user_id}, email: {email}")
