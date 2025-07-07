@@ -70,6 +70,8 @@ stringData:
 {{- if .Values.modelRegistry.enabled }}
 {{- $serviceExists := (lookup "v1" "Service" .Values.modelRegistry.namespace "model-registry-db") }}
 {{- if not $serviceExists }}
+{{- $serviceExists := (lookup "v1" "Service" .Values.modelRegistry.namespace "model-registry-db") }}
+{{- if not $serviceExists }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -100,6 +102,8 @@ spec:
 {{- if .Values.modelRegistry.enabled }}
 {{- $pvcExists := (lookup "v1" "PersistentVolumeClaim" .Values.modelRegistry.namespace "model-registry-db") }}
 {{- if not $pvcExists }}
+{{- $pvcExists := (lookup "v1" "PersistentVolumeClaim" .Values.modelRegistry.namespace "model-registry-db") }}
+{{- if not $pvcExists }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -122,6 +126,8 @@ spec:
 {{- end }}
 ---
 {{- if .Values.modelRegistry.enabled }}
+{{- $deploymentExists := (lookup "apps/v1" "Deployment" .Values.modelRegistry.namespace "model-registry-db") }}
+{{- if not $deploymentExists }}
 {{- $deploymentExists := (lookup "apps/v1" "Deployment" .Values.modelRegistry.namespace "model-registry-db") }}
 {{- if not $deploymentExists }}
 apiVersion: apps/v1
