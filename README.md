@@ -119,7 +119,7 @@ Depend on the scale and speed required, for small amount of users have minimus o
    export NAMESPACE=<namespace>
    ```
 
-4. Install using make:
+4. Install using make (this should take 8~ minutes with the default data, and with custom data maybe me less or more):
    ```bash
    # This will create the namespace and deploy all components
    make install
