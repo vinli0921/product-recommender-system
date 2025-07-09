@@ -67,7 +67,7 @@ class FeastService:
         try:
             user_df = self.dataset_provider.user_df()
             print("Fetched all users")
-            return user_df.to_dict(orient="records")
+            return user_df
         except Exception as e:
             print(f"Failed to fetch users from feature view: {e}")
             return []
