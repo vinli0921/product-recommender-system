@@ -1,5 +1,6 @@
 import { PageSection, Title } from '@patternfly/react-core';
 import { GalleryView } from './Gallery';
+import { GallerySkeleton } from './gallery-skeleton';
 import { FakerProducts } from './faker-products';
 import { fetchCatalog } from '../services/products';
 import { useQuery } from '@tanstack/react-query';
@@ -18,7 +19,7 @@ export function CatalogPage() {
         <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
           Catalog
         </Title>
-        <GalleryView products={products} />
+        {isLoading ? <GallerySkeleton count={12} /> : <GalleryView products={products} />}
       </PageSection>
     </>
   );

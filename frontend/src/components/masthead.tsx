@@ -10,16 +10,25 @@ import {
   NavList,
   Masthead as PFMasthead,
   PageToggleButton,
-  SearchInput,
   Title,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+  type MenuToggleElement,
+  Avatar,
+  Divider,
 } from '@patternfly/react-core';
 
 import { Link, useLocation } from '@tanstack/react-router';
-import { BarsIcon, CogIcon } from '@patternfly/react-icons';
+import { BarsIcon, CogIcon, EllipsisVIcon } from '@patternfly/react-icons';
+import { Search } from './search';
+import { UserDropdown } from './user-dropdown';
+import { useState } from 'react';
 
 export const themeStorageKey = 'app-theme';
 
@@ -35,40 +44,7 @@ export function Masthead({
   onSidebarToggle,
 }: MastheadProps) {
   const location = useLocation();
-
-  const nav = (
-    <Nav variant="horizontal" aria-label="Main Nav">
-      <NavList>
-        <NavItem itemId={0} isActive={location.pathname == '/'} to="#">
-          <Link to="/">
-            <Flex
-              direction={{ default: 'row' }}
-              alignItems={{ default: 'alignItemsCenter' }}
-              gap={{ default: 'gapSm' }}
-            >
-              <FlexItem>Home</FlexItem>
-            </Flex>
-          </Link>
-        </NavItem>
-        <NavItem
-          icon={<CogIcon />}
-          itemId={1}
-          isActive={location.pathname.startsWith('/account')}
-          to="#"
-        >
-          <Link to="/account">
-            <Flex
-              direction={{ default: 'row' }}
-              alignItems={{ default: 'alignItemsCenter' }}
-              gap={{ default: 'gapSm' }}
-            >
-              <FlexItem>My Account</FlexItem>
-            </Flex>
-          </Link>
-        </NavItem>
-      </NavList>
-    </Nav>
-  );
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggle =
     showSidebarToggle && onSidebarToggle ? (
@@ -83,21 +59,36 @@ export function Masthead({
       </PageToggleButton>
     ) : null;
 
-  const toolbar = (
-    <Toolbar
-      inset={{
-        default: 'insetSm',
-        md: 'insetMd',
-        lg: 'insetLg',
-        xl: 'insetXl',
-        '2xl': 'inset2xl',
-      }}
-      isFullHeight
+  const mobileMenuToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      aria-label="User menu"
+      variant="plain"
     >
+      <EllipsisVIcon />
+    </MenuToggle>
+  );
+
+  const toolbar = (
+    <Toolbar isFullHeight>
       <ToolbarContent>
-        <ToolbarGroup align={{ default: 'alignEnd' }}>
-          <SearchInput aria-label="Sticky example search input" />
-          <ToolbarItem>{nav}</ToolbarItem>
+        <ToolbarGroup
+          className="pf-v6-u-w-100 pf-v6-u-w-75-on-md pf-v6-u-px-xl-on-md"
+          variant="filter-group"
+          align={{ default: 'alignCenter' }}
+        >
+          <ToolbarItem className="pf-v6-u-w-100">
+            <Search />
+          </ToolbarItem>
+        </ToolbarGroup>
+        <ToolbarGroup
+          variant="action-group"
+          className="pf-v6-u-display-none pf-v6-u-display-block-on-md"
+        >
+          <ToolbarItem>
+            <UserDropdown />
+          </ToolbarItem>
         </ToolbarGroup>
       </ToolbarContent>
     </Toolbar>
