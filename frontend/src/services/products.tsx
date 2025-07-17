@@ -29,13 +29,13 @@ export const fetchSearch = async (): Promise<ProductData[]> => {
   return data as ProductData[];
 };
 
-export const fetchProduct = async (product_id: string): Promise<ProductData[]> => {
+export const fetchProduct = async (product_id: string): Promise<ProductData> => {
   const response = await fetch(`/api/products/${product_id}`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
   const data: unknown = await response.json();
-  return data as ProductData[];
+  return data as ProductData;
 };
 
 export const editCart = async (cartItem: CartItem) => {
