@@ -14,6 +14,14 @@ async def search_products_by_text(query: str, k: int = 5):
     feast = FeastService()
     return feast.search_item_by_text(query, k)
 
+@router.get("/products/search/image_link", response_model=List[Product])
+async def search_products_by_image_link(image__link: str, k: int = 5):
+    """
+    Search products by image_link
+    """
+    feast = FeastService()
+    return feast.search_item_by_image_link(image__link, k)
+
 @router.get("/products/search/image", response_model=List[Product])
 async def search_products_by_image(image):
     """
