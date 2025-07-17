@@ -2,16 +2,17 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 from models import Product
 from services.kafka_service import KafkaService
+from services.feast_service import FeastService
 
 router = APIRouter()
 
 @router.get("/products/search", response_model=List[Product])
-async def search_products_by_text(query: str):
+async def search_products_by_text(query: str, k: int = 5):
     """
     Search products by text query
     """
-    # Logic for text-based search
-    return []
+    feast = FeastService()
+    return feast.search_item_by_text(query, k)
 
 @router.get("/products/search/image", response_model=List[Product])
 async def search_products_by_image(image):

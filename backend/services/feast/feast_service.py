@@ -13,6 +13,9 @@ from recsysapp.models.entity_tower import EntityTower
 from recsysapp.models.data_util import data_preproccess
 from pathlib import Path
 
+from transformers import AutoModel, AutoTokenizer
+
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
 class FeastService:
     _instance = None
@@ -119,3 +122,16 @@ class FeastService:
         rating=getattr(row, "rating", None),
         ) for row in suggested_item.itertuples()]
         return suggested_item
+    
+    def search_item_by_text(self, text, k=5):
+        from public.service.search_by_text import SearchService
+        search_service = SearchService(self.store)
+        results_df = search_service.search_by_text(text, k)
+        print(results_df)
+        top_item_ids = results_df["item_id"].tolist()
+        results = self._item_ids_to_product_list(top_item_ids)
+        return results
+    
+    
+
+
