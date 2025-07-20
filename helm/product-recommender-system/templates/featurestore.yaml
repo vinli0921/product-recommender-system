@@ -32,6 +32,7 @@ spec:
     git:
       url: https://github.com/RHEcosystemAppEng/rec-sys-app
       ref: main
+      featureRepoPath: recsysapp
   services:
     offlineStore:
       persistence:
@@ -115,7 +116,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - cd feature_repo && feast apply
+            - cd recsysapp/feature_repo && feast apply
           imagePullPolicy: IfNotPresent
           {{- with .Values.env }}
           env:

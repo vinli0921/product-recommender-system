@@ -22,6 +22,7 @@ dependencies = [
     "uvicorn[standard]>=0.29.0",
     "python-jose>=3.5.0",
     "psycopg2-binary>=2.9.10",
+    "recsysapp",
 ]
 
 [project.optional-dependencies]
@@ -37,3 +38,6 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = "."
+
+[tool.uv.sources]
+recsysapp = { git = "https://github.com/RHEcosystemAppEng/rec-sys-app", rev = "ef83679" }

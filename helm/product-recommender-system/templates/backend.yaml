@@ -187,8 +187,7 @@ spec:
       - name: db-init
         image: "{{ .Values.backendImage }}"
         imagePullPolicy: {{ .Values.backend.pullPolicy }}
-        command: ["python"]
-        args: ["init_backend.py"]
+        command: ["python", "init_backend.py"]
         workingDir: /app
         env:
           {{- if .Values.env }}

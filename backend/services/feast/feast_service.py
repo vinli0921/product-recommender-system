@@ -8,6 +8,11 @@ import json
 import shutil
 from datetime import datetime, timezone
 import pandas as pd
+from recsysapp.service.dataset_provider import LocalDatasetProvider
+from recsysapp.models.entity_tower import EntityTower
+from recsysapp.models.data_util import data_preproccess
+from pathlib import Path
+
 
 class FeastService:
     _instance = None
@@ -20,13 +25,12 @@ class FeastService:
 
     def __init__(self):
         if not self._initialized:
-            from public.service.dataset_provider import LocalDatasetProvider
             
-            self.store = FeatureStore('public')
+            self.store = FeatureStore(str(Path(__file__).parent))
             self._initialized = True
             self.user_encoder = self._load_user_encoder()
             self.user_service = self.store.get_feature_service("user_service")
-            self.dataset_provider = LocalDatasetProvider(self.store, data_dir='public/data')
+            self.dataset_provider = LocalDatasetProvider(self.store, data_dir='services/feast/data') # TODO: remove path when Feast is the issue
 
     def _load_model_version(self):
         from sqlalchemy import text
@@ -41,7 +45,6 @@ class FeastService:
             return version
 
     def _load_user_encoder(self):
-        from public.models.entity_tower import EntityTower
         
         minio_client = Minio(
             endpoint=os.getenv('MINIO_HOST', "endpoint") + ':' + os.getenv('MINIO_PORT', '9000'),
@@ -82,7 +85,6 @@ class FeastService:
         return self._item_ids_to_product_list(top_item_ids)
 
     def load_items_new_user(self, user: User, k: int = 10):
-        from public.models.data_util import data_preproccess
         
         user_as_df = pd.DataFrame([user.model_dump()])
         user_embed = self.user_encoder(**data_preproccess(user_as_df))[0]
