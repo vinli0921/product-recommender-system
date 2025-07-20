@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from models import User as UserSchema  # Pydantic User
 from models import Product
 from database.models_sql import User
-from services.feast_service import FeastService
+from services.feast.feast_service import FeastService
 from routes.auth import get_current_user  # to resolve JWT user
 
 router = APIRouter()

@@ -1,4 +1,4 @@
-from services.feast_service import FeastService
+from services.feast.feast_service import FeastService
 import asyncio
 import random
 import string

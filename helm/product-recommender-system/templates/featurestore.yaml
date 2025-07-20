@@ -115,7 +115,7 @@ spec:
           command:
             - /bin/bash
             - -c
-            - cd feature_repo && feast apply
+            - cd recsysapp/feature_repo && feast apply
           imagePullPolicy: IfNotPresent
           {{- with .Values.env }}
           env:
