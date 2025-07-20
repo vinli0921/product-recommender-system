@@ -30,7 +30,7 @@ class FeastService:
             self._initialized = True
             self.user_encoder = self._load_user_encoder()
             self.user_service = self.store.get_feature_service("user_service")
-            self.dataset_provider = LocalDatasetProvider(self.store, data_dir='services/feast/tmp_data') # TODO: remove path when Feast is the issue
+            self.dataset_provider = LocalDatasetProvider(self.store, data_dir='services/feast/data') # TODO: remove path when Feast is the issue
 
     def _load_model_version(self):
         from sqlalchemy import text
