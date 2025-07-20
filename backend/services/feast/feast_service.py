@@ -11,9 +11,10 @@ import pandas as pd
 from recsysapp.service.dataset_provider import LocalDatasetProvider
 from recsysapp.models.entity_tower import EntityTower
 from recsysapp.models.data_util import data_preproccess
+from recsysapp.service.search_by_text import SearchService
+from recsysapp.service.clip_encoder import ClipEncoder
+from recsysapp.service.search_by_image import SearchByImageService
 from pathlib import Path
-
-from transformers import AutoModel, AutoTokenizer
 from PIL import Image as PILImage
 
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
@@ -57,8 +58,6 @@ class FeastService:
         """
         Download and load the user encoder model and its configuration from MinIO.
         """
-        from public.models.entity_tower import EntityTower
-        
         minio_client = Minio(
             endpoint=os.getenv('MINIO_HOST', "endpoint") + ':' + os.getenv('MINIO_PORT', '9000'),
             access_key=os.getenv('MINIO_ACCESS_KEY', "access-key"),
@@ -108,8 +107,6 @@ class FeastService:
         Generate recommendations for a new user by encoding their features
         and querying the feature store for top-k similar items.
         """
-        from public.models.data_util import data_preproccess
-        
         user_as_df = pd.DataFrame([user.model_dump()])
         user_embed = self.user_encoder(**data_preproccess(user_as_df))[0]
         top_k = self.store.retrieve_online_documents(
@@ -151,7 +148,6 @@ class FeastService:
         Perform a semantic search over item descriptions using a text query.
         Returns top-k matching items.
         """
-        from public.service.search_by_text import SearchService
         search_service = SearchService(self.store)
         results_df = search_service.search_by_text(text, k)
         print(results_df)
@@ -164,8 +160,6 @@ class FeastService:
         Perform image-based product search using an image URL.
         Returns top-k similar items.
         """
-        from public.service.clip_encoder import ClipEncoder
-        from public.service.search_by_image import SearchByImageService
         clip_encoder = ClipEncoder()
         search_image_service = SearchByImageService(self.store, clip_encoder)
         results_df = search_image_service.search_by_image_link(image_link, k)
@@ -179,8 +173,6 @@ class FeastService:
         Perform image-based product search using a raw uploaded image (PIL.Image).
         Returns top-k similar items.
         """
-        from public.service.clip_encoder import ClipEncoder
-        from public.service.search_by_image import SearchByImageService
         clip_encoder = ClipEncoder()
         search_service = SearchByImageService(self.store, clip_encoder)
         results_df = search_service.search_by_image(image, k)

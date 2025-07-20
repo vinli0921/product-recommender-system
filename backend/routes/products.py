@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from typing import List
 from models import Product
 from services.kafka_service import KafkaService
-from services.feast_service import FeastService
+from services.feast.feast_service import FeastService
 from routes.auth import get_current_user  # to resolve JWT user
 from PIL import Image
 
