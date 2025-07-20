@@ -93,7 +93,19 @@ spec:
             echo "Still waiting for $url ..."
             sleep 10
           done
-          echo "Data science pipeline configured"
+    - name: wait-for-feast-apply
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      command:
+        - /bin/bash
+        - -c
+        - |
+          set -e
+          echo "Waiting for feast-apply-job to complete..."
+          until oc get job feast-apply-job -n {{ .Release.Namespace }} -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' | grep -q "True"; do
+            echo "Still waiting for feast-apply-job..."
+            sleep 10
+          done
+          echo "Feast apply job completed successfully"
   containers:
   - name: kfp-runner
     image: {{ .Values.pipelineJobImage }}
