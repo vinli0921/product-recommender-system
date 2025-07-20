@@ -7,7 +7,7 @@ RUN dnf update -y
 
 RUN pip3 install uv
 COPY pyproject.toml pyproject.toml
-RUN uv sync
+RUN uv pip install -r pyproject.toml
 
 # Copy the rest of the app
 COPY . .
