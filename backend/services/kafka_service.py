@@ -93,7 +93,7 @@ class KafkaService:
             "name": "new-users"
         }
 
-    def send_interaction(self, user_id: str, item_id: int, interaction_type: str,
+    def send_interaction(self, user_id: str, item_id: str, interaction_type: str,
                          rating: Optional[int] = None, quantity: Optional[int] = None,
                          review_title: Optional[str] = None,
                          review_content: Optional[str] = None) -> None:

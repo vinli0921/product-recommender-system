@@ -14,6 +14,7 @@ from recsysapp.models.data_util import data_preproccess
 from pathlib import Path
 
 from transformers import AutoModel, AutoTokenizer
+from PIL import Image as PILImage
 
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
@@ -38,6 +39,9 @@ class FeastService:
             self.dataset_provider = LocalDatasetProvider(self.store, data_dir='services/feast/data') # TODO: remove path when Feast is the issue
 
     def _load_model_version(self):
+        """
+        Retrieve the most recently updated model version from the database.
+        """
         from sqlalchemy import text
         from sqlalchemy import create_engine
 
@@ -50,6 +54,10 @@ class FeastService:
             return version
 
     def _load_user_encoder(self):
+        """
+        Download and load the user encoder model and its configuration from MinIO.
+        """
+        from public.models.entity_tower import EntityTower
         
         minio_client = Minio(
             endpoint=os.getenv('MINIO_HOST', "endpoint") + ':' + os.getenv('MINIO_PORT', '9000'),
@@ -73,6 +81,9 @@ class FeastService:
         return user_encoder
 
     def get_all_existing_users(self) -> List[dict]:
+        """
+        Return all existing user feature rows from the dataset provider.
+        """
         try:
             user_df = self.dataset_provider.user_df()
             print("Fetched all users")
@@ -82,6 +93,9 @@ class FeastService:
             return []
 
     def load_items_existing_user(self, user_id: str) -> List[Product]:
+        """
+        Get top recommended items for an existing user based on their user_id.
+        """
         suggested_item_ids = self.store.get_online_features(
             features=self.store.get_feature_service('user_top_k_items'),
             entity_rows=[{'user_id': user_id}]
@@ -90,6 +104,11 @@ class FeastService:
         return self._item_ids_to_product_list(top_item_ids)
 
     def load_items_new_user(self, user: User, k: int = 10):
+        """
+        Generate recommendations for a new user by encoding their features
+        and querying the feature store for top-k similar items.
+        """
+        from public.models.data_util import data_preproccess
         
         user_as_df = pd.DataFrame([user.model_dump()])
         user_embed = self.user_encoder(**data_preproccess(user_as_df))[0]
@@ -100,10 +119,12 @@ class FeastService:
         )
         print("Retrieved documents from store:", top_k.to_df())
         top_item_ids = top_k.to_df()['item_id'].tolist()
-        #top_item_ids = top_k.to_df().iloc[0]['top_k_item_ids']
         return self._item_ids_to_product_list(top_item_ids)
 
     def _item_ids_to_product_list(self, top_item_ids: pd.Series | List) -> List[Product]:
+        """
+        Given a list of item_ids, fetch and return full product details from the feature store.
+        """
         suggested_item = self.store.get_online_features(
             features=self.store.get_feature_service('item_service'),
             entity_rows=[{'item_id': item_id} for item_id in top_item_ids]
@@ -125,7 +146,11 @@ class FeastService:
         ) for row in suggested_item.itertuples()]
         return suggested_item
     
-    def search_item_by_text(self, text, k=5):
+    def search_item_by_text(self, text: str, k=5):
+        """
+        Perform a semantic search over item descriptions using a text query.
+        Returns top-k matching items.
+        """
         from public.service.search_by_text import SearchService
         search_service = SearchService(self.store)
         results_df = search_service.search_by_text(text, k)
@@ -134,7 +159,11 @@ class FeastService:
         results = self._item_ids_to_product_list(top_item_ids)
         return results
     
-    def search_item_by_image_link(self, image_link, k=5):
+    def search_item_by_image_link(self, image_link: str, k=5):
+        """
+        Perform image-based product search using an image URL.
+        Returns top-k similar items.
+        """
         from public.service.clip_encoder import ClipEncoder
         from public.service.search_by_image import SearchByImageService
         clip_encoder = ClipEncoder()
@@ -144,6 +173,32 @@ class FeastService:
         top_item_ids = results_df["item_id"].tolist()
         results = self._item_ids_to_product_list(top_item_ids)
         return results
+    
+    def search_item_by_image_file(self, image: PILImage.Image, k=5):
+        """
+        Perform image-based product search using a raw uploaded image (PIL.Image).
+        Returns top-k similar items.
+        """
+        from public.service.clip_encoder import ClipEncoder
+        from public.service.search_by_image import SearchByImageService
+        clip_encoder = ClipEncoder()
+        search_service = SearchByImageService(self.store, clip_encoder)
+        results_df = search_service.search_by_image(image, k)
+        print(results_df)
+        top_item_ids = results_df["item_id"].tolist()
+        results = self._item_ids_to_product_list(top_item_ids)
+        return results
+
+    
+    def get_item_by_id(self, item_id: int) -> Product:
+        """
+        Retrieve a single item by its ID and return it as a Product
+        """
+        product_list = self._item_ids_to_product_list([item_id])
+        if not product_list:
+            raise ValueError(f"Item with ID {item_id} not found.")
+        return product_list[0]
+
         
 
 
