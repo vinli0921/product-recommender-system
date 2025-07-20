@@ -1,6 +1,7 @@
 from typing import List
 from feast import FeatureStore
 from models import Product, User
+import requests
 import os
 from minio import Minio
 import torch
@@ -16,6 +17,7 @@ from recsysapp.service.clip_encoder import ClipEncoder
 from recsysapp.service.search_by_image import SearchByImageService
 from pathlib import Path
 from PIL import Image as PILImage
+from io import BytesIO
 
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
@@ -162,24 +164,56 @@ class FeastService:
         """
         clip_encoder = ClipEncoder()
         search_image_service = SearchByImageService(self.store, clip_encoder)
-        results_df = search_image_service.search_by_image_link(image_link, k)
-        print(results_df)
-        top_item_ids = results_df["item_id"].tolist()
-        results = self._item_ids_to_product_list(top_item_ids)
-        return results
+        try:
+            # Manually check if the image is reachable and decodable
+            resp = requests.get(image_link, timeout=100)
+            resp.raise_for_status()
+
+            # Try decoding it to ensure it's a valid image
+            img = PILImage.open(BytesIO(resp.content))
+            img.verify()  # Raises if the image is corrupt
+
+        except Exception as e:
+            print(f"[Validation] Could not fetch/validate image: {e}")
+            raise ValueError("Invalid or unreachable image URL.")
+        try:
+            results_df = search_image_service.search_by_image_link(image_link, k)
+            print(results_df)
+            top_item_ids = results_df["item_id"].tolist()
+            return self._item_ids_to_product_list(top_item_ids)
+        except Exception as e:
+            print(f"Error in search_item_by_image_link: {e}")
+            raise ValueError("Failed to process image from URL.")
     
     def search_item_by_image_file(self, image: PILImage.Image, k=5):
         """
         Perform image-based product search using a raw uploaded image (PIL.Image).
         Returns top-k similar items.
         """
-        clip_encoder = ClipEncoder()
-        search_service = SearchByImageService(self.store, clip_encoder)
-        results_df = search_service.search_by_image(image, k)
-        print(results_df)
-        top_item_ids = results_df["item_id"].tolist()
-        results = self._item_ids_to_product_list(top_item_ids)
-        return results
+        print("[Feast] Starting search_item_by_image_file")
+
+        try:
+            clip_encoder = ClipEncoder()
+            print("[Feast] ClipEncoder initialized")
+            search_service = SearchByImageService(self.store, clip_encoder)
+            print("[Feast] SearchByImageService initialized")
+            results_df = search_service.search_by_image(image, k)
+            print("[Feast] search_by_image() completed")
+            print(results_df)
+            if results_df.empty:
+                print("[Feast] No results returned from search_by_image")
+                raise ValueError("No results returned.")
+            if "item_id" not in results_df.columns:
+                print(f"[Feast] 'item_id' column missing in results: {results_df.columns}")
+                raise ValueError("Missing 'item_id' column in result.")
+            top_item_ids = results_df["item_id"].tolist()
+            print(f"[Feast] Top item IDs: {top_item_ids}")
+            products = self._item_ids_to_product_list(top_item_ids)
+            return products
+
+        except Exception as e:
+            print(f"[Feast Error] {e}")
+            raise ValueError("Failed to process image.")
 
     
     def get_item_by_id(self, item_id: int) -> Product:
@@ -190,15 +224,3 @@ class FeastService:
         if not product_list:
             raise ValueError(f"Item with ID {item_id} not found.")
         return product_list[0]
-
-        
-
-
-
-    
-    
-    
-    
-    
-
-

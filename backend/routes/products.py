@@ -4,7 +4,8 @@ from models import Product
 from services.kafka_service import KafkaService
 from services.feast.feast_service import FeastService
 from routes.auth import get_current_user  # to resolve JWT user
-from PIL import Image
+from io import BytesIO
+from PIL import Image, UnidentifiedImageError
 
 router = APIRouter()
 
@@ -38,14 +39,28 @@ async def search_products_by_image(image: UploadFile = File(...), k: int = 5):
     Search products by image
     """
     try:
+        contents = await image.read()
+        try:
+            # Try decoding the image in memory
+            pil_image = Image.open(BytesIO(contents))
+            pil_image.verify()  # Just checks integrity
+            pil_image = Image.open(BytesIO(contents))  # Reopen after verify
+            print(f"Image mode: {pil_image.mode}, size: {pil_image.size}, format: {pil_image.format}")
+        except UnidentifiedImageError as e:
+            print(f"[ImageError] Cannot identify image: {e}")
+            raise HTTPException(status_code=400, detail="Unsupported or invalid image format.")
+        except Exception as e:
+            print(f"[ImageError] General image load error: {e}")
+            raise HTTPException(status_code=400, detail="Failed to process uploaded image.")
+
         feast = FeastService()
-        # Convert uploaded file to PIL.Image
-        pil_image.verify()
-        image.file.seek(0)
-        pil_image = Image.open(image.file)
         return feast.search_item_by_image_file(pil_image, k)
+
+    except HTTPException:
+        raise  # Pass through
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"[InternalError] {e}")
+        raise HTTPException(status_code=500, detail="Unexpected server error during image search.")
 
 @router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str, user_id = Depends(get_current_user)):
