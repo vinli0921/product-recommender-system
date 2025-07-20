@@ -32,6 +32,7 @@ spec:
     git:
       url: https://github.com/RHEcosystemAppEng/rec-sys-app
       ref: main
+      featureRepoPath: recsysapp
   services:
     offlineStore:
       persistence:

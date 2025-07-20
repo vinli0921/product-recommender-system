@@ -40,4 +40,4 @@ dev = [
 pythonpath = "."
 
 [tool.uv.sources]
-recsysapp = { git = "https://github.com/RHEcosystemAppEng/rec-sys-app", rev = "08fc51a" }
+recsysapp = { git = "https://github.com/RHEcosystemAppEng/rec-sys-app", rev = "ef83679" }
