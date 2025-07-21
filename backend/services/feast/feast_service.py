@@ -186,34 +186,32 @@ class FeastService:
             raise ValueError("Failed to process image from URL.")
     
     def search_item_by_image_file(self, image: PILImage.Image, k=5):
-        """
-        Perform image-based product search using a raw uploaded image (PIL.Image).
-        Returns top-k similar items.
-        """
         print("[Feast] Starting search_item_by_image_file")
-
         try:
-            clip_encoder = ClipEncoder()
-            print("[Feast] ClipEncoder initialized")
+            try:
+                clip_encoder = ClipEncoder()
+                print("[Feast] ClipEncoder initialized")
+            except Exception as e:
+                print(f"[Feast Error] ClipEncoder init failed: {e}")
+                raise ValueError("ClipEncoder failed to load")
+
             search_service = SearchByImageService(self.store, clip_encoder)
             print("[Feast] SearchByImageService initialized")
+
             results_df = search_service.search_by_image(image, k)
             print("[Feast] search_by_image() completed")
             print(results_df)
-            if results_df.empty:
-                print("[Feast] No results returned from search_by_image")
-                raise ValueError("No results returned.")
-            if "item_id" not in results_df.columns:
-                print(f"[Feast] 'item_id' column missing in results: {results_df.columns}")
-                raise ValueError("Missing 'item_id' column in result.")
+
+            if results_df.empty or "item_id" not in results_df:
+                raise ValueError("No valid item_id results returned from image search.")
+
             top_item_ids = results_df["item_id"].tolist()
-            print(f"[Feast] Top item IDs: {top_item_ids}")
-            products = self._item_ids_to_product_list(top_item_ids)
-            return products
+            return self._item_ids_to_product_list(top_item_ids)
 
         except Exception as e:
-            print(f"[Feast Error] {e}")
+            print(f"[SearchByImage Error] {e}")
             raise ValueError("Failed to process image.")
+
 
     
     def get_item_by_id(self, item_id: int) -> Product:

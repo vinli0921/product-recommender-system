@@ -31,7 +31,7 @@ class KafkaService:
                 "optional": False,
             }, {
                 "field": "item_id",
-                "type": "int32",
+                "type": "string",
                 "optional": False,
             }, {
                 "field": "timestamp",

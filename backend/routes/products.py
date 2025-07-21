@@ -36,7 +36,7 @@ async def search_products_by_image_link(image_link: str, k: int = 5):
 @router.post("/products/search/image", response_model=List[Product])
 async def search_products_by_image(image: UploadFile = File(...), k: int = 5):
     """
-    Search products by image
+    Search products by image - Not fully ready yet
     """
     try:
         contents = await image.read()
