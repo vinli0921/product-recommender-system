@@ -1,21 +1,21 @@
-import { GalleryView } from "./Gallery";
-import { Title, FlexItem, Skeleton } from "@patternfly/react-core";
-import { fetchWishlist } from "../services/products";
-import { useQuery } from "@tanstack/react-query";
+import { GalleryView } from './Gallery';
+import { Title, FlexItem, Skeleton } from '@patternfly/react-core';
+import { useWishlist } from '../hooks';
 
 export function Wishlist() {
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["wishlist"], // A unique key for this query
-    queryFn: fetchWishlist, // The async function to fetch data
-  });
+  const { data, isError, isLoading } = useWishlist();
 
   return (
     <FlexItem>
-      <Title headingLevel={"h1"} style={{ paddingBottom: 20 }}>Wishlist</Title>
+      <Title headingLevel={'h1'} style={{ paddingBottom: 20 }}>
+        Wishlist
+      </Title>
       {isLoading ? (
         <Skeleton style={{ height: 200 }} />
+      ) : isError ? (
+        <div>Error fetching wishlist</div>
       ) : (
-        isError ? <div>Error fetching wishlist</div> : <GalleryView products={data ?? []} />
+        <GalleryView products={data ?? []} />
       )}
     </FlexItem>
   );

@@ -1,13 +1,9 @@
 import { PageSection, Title, Spinner, Alert } from '@patternfly/react-core';
-import { useQuery } from '@tanstack/react-query';
 import { GalleryView } from './Gallery';
-import { fetchRecommendations } from '../services/products';
+import { useRecommendations } from '../hooks';
 
 export function LandingPage() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['recommendations'],
-    queryFn: fetchRecommendations,
-  });
+  const { data, isLoading, isError } = useRecommendations();
 
   if (isLoading) {
     return (

@@ -1,19 +1,14 @@
 import { PageSection, Title, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { GalleryView } from './Gallery';
 import { GallerySkeleton } from './gallery-skeleton';
-import { searchProducts } from '../services/products';
-import { useQuery } from '@tanstack/react-query';
+import { useProductSearch } from '../hooks';
 
 interface SearchResultsPageProps {
   query: string;
 }
 
 export function SearchResultsPage({ query }: SearchResultsPageProps) {
-  const { data, error, isLoading } = useQuery({
-    queryKey: ['search', query],
-    queryFn: () => searchProducts(query),
-    enabled: query.length > 0,
-  });
+  const { data, error, isLoading } = useProductSearch(query, query.length > 0);
 
   const products = data ? data : [];
 

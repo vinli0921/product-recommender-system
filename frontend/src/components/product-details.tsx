@@ -9,30 +9,24 @@ import {
   Skeleton,
 } from '@patternfly/react-core';
 import StarRatings from 'react-star-ratings';
-import { editCart, fetchProduct } from '../services/products';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useProductActions } from '../hooks';
 import { Route } from '../routes/_protected/product/$productId';
 
 export const ProductDetails = () => {
   // loads productId from route /product/$productId
   const { productId } = Route.useLoaderData();
 
-  // Query for product by productId
-  const {
-    data: product,
-    isError,
-    isLoading,
-  } = useQuery({
-    queryKey: ['product', productId], // A unique key for this query
-    queryFn: async () => fetchProduct(productId), // The async function to fetch data
-  });
+  // Use our composite hook for all product actions
+  const { product, error, isLoading, addToCart, isAddingToCart, recordClick } =
+    useProductActions(productId);
 
-  // Mutation for adding product to cart
-  const handleAddToCart = useMutation({
-    mutationFn: (cartItem: any) => editCart(cartItem),
-  });
+  // Record that user viewed this product
+  // This could also be done automatically in the hook
+  if (product && !isLoading) {
+    recordClick();
+  }
 
-  if (isError || !product) {
+  if (error || !product) {
     return <div>Error fetching product</div>;
   }
 
@@ -90,9 +84,11 @@ export const ProductDetails = () => {
                   <FlexItem>
                     <Button
                       variant="secondary"
-                      onClick={() => handleAddToCart.mutate({ userId: 'current-user', productId })}
+                      onClick={() => addToCart(1)}
+                      isLoading={isAddingToCart}
+                      isDisabled={isAddingToCart}
                     >
-                      Add to Cart
+                      {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                     </Button>
                   </FlexItem>
                   <FlexItem>
