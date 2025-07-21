@@ -166,7 +166,7 @@ pipelineJobImage: quay.io/ecosystem-appeng/rec-sys-workflow:0.0.8
 frontendImage: quay.io/ecosystem-appeng/rec-sys-ui:0.0.4
 applicationImage: quay.io/ecosystem-appeng/rec-sys-app:0.0.47
 # Note the backend uses rec-sys-app as library.
-backendImage: quay.io/ikatav/rec-sys-backend:0.0.2
+backendImage: quay.io/ikatav/rec-sys-backend:0.0.5
 
 dbName: product_recommender_system
 
