@@ -2,7 +2,7 @@ import { PageSection, Title, Button, Flex, FlexItem } from '@patternfly/react-co
 import { useState } from 'react';
 import { GallerySkeleton } from './gallery-skeleton';
 import { GalleryView } from './Gallery';
-import { FakerProducts } from './faker-products';
+// Note: faker-products was removed
 
 export function SkeletonDemo() {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,7 @@ export function SkeletonDemo() {
     setCount(count === 8 ? 12 : 8);
   };
 
-  const products = FakerProducts();
+  const products: any[] = []; // Placeholder for demo
 
   return (
     <PageSection hasBodyWrapper={false}>

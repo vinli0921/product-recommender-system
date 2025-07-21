@@ -7,11 +7,11 @@ import {
   Flex,
   FlexItem,
   Skeleton,
-} from "@patternfly/react-core";
-import StarRatings from "react-star-ratings";
-import { editCart, fetchProduct } from "../services/products";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Route } from "../routes/product/$productId";
+} from '@patternfly/react-core';
+import StarRatings from 'react-star-ratings';
+import { editCart, fetchProduct } from '../services/products';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Route } from '../routes/_protected/product/$productId';
 
 export const ProductDetails = () => {
   // loads productId from route /product/$productId
@@ -23,12 +23,14 @@ export const ProductDetails = () => {
     isError,
     isLoading,
   } = useQuery({
-    queryKey: ["product", productId], // A unique key for this query
+    queryKey: ['product', productId], // A unique key for this query
     queryFn: async () => fetchProduct(productId), // The async function to fetch data
   });
 
   // Mutation for adding product to cart
-  const handleAddToCart = useMutation({ mutationFn: editCart });
+  const handleAddToCart = useMutation({
+    mutationFn: (cartItem: any) => editCart(cartItem),
+  });
 
   if (isError || !product) {
     return <div>Error fetching product</div>;
@@ -42,32 +44,32 @@ export const ProductDetails = () => {
   return (
     <>
       {isLoading ? (
-        <Skeleton style={{ flex: 1, minWidth: 0, height: "100%" }} />
+        <Skeleton style={{ flex: 1, minWidth: 0, height: '100%' }} />
       ) : (
         <>
-          <FlexItem style={{ flex: 1, minWidth: 0, height: "100%" }}>
-            <Card style={{ height: "100%" }}>
-              <CardBody style={{ height: "100%", padding: 0 }}>
+          <FlexItem style={{ flex: 1, minWidth: 0, height: '100%' }}>
+            <Card style={{ height: '100%' }}>
+              <CardBody style={{ height: '100%', padding: 0 }}>
                 <img
                   src={product.imageUrl}
                   alt={product.title}
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
                   }}
                 />
               </CardBody>
             </Card>
           </FlexItem>
-          <FlexItem style={{ flex: 1, minWidth: 0, height: "100%" }}>
-            <Card isPlain style={{ height: "100%" }}>
-              <CardTitle style={{ fontSize: "2rem", fontWeight: "bold" }}>
+          <FlexItem style={{ flex: 1, minWidth: 0, height: '100%' }}>
+            <Card isPlain style={{ height: '100%' }}>
+              <CardTitle style={{ fontSize: '2rem', fontWeight: 'bold' }}>
                 {product.title}
               </CardTitle>
               <CardBody>
-                <Flex direction={{ default: "column" }}>
+                <Flex direction={{ default: 'column' }}>
                   <FlexItem>
                     <StarRatings
                       rating={product.rating}
@@ -76,7 +78,7 @@ export const ProductDetails = () => {
                       name="rating"
                       starDimension="18px"
                       starSpacing="1px"
-                    />{" "}
+                    />{' '}
                     {product.rating}
                   </FlexItem>
                   <FlexItem headers="h1">${product.price}</FlexItem>
@@ -88,9 +90,7 @@ export const ProductDetails = () => {
                   <FlexItem>
                     <Button
                       variant="secondary"
-                      onClick={() =>
-                        handleAddToCart.mutate({ userId, productId })
-                      }
+                      onClick={() => handleAddToCart.mutate({ userId: 'current-user', productId })}
                     >
                       Add to Cart
                     </Button>

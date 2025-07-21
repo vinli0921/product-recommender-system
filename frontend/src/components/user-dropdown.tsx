@@ -4,16 +4,15 @@ import {
   Dropdown,
   DropdownItem,
   DropdownList,
-  Flex,
-  FlexItem,
   MenuToggle,
   type MenuToggleElement,
 } from '@patternfly/react-core';
-import { UserIcon, SignOutAltIcon, EllipsisVIcon } from '@patternfly/react-icons';
-import { Link } from '@tanstack/react-router';
+import { UserIcon, SignOutAltIcon } from '@patternfly/react-icons';
+import { useAuth } from '../contexts/AuthProvider';
 
 export const UserDropdown: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -22,6 +21,19 @@ export const UserDropdown: React.FunctionComponent = () => {
   const onSelect = () => {
     setIsOpen(false);
   };
+
+  const handleLogout = () => {
+    logout();
+    onSelect();
+  };
+
+  // Don't render if not authenticated or still loading
+  if (!isAuthenticated || isLoading) {
+    return null;
+  }
+
+  // Extract user's first name or use email as fallback
+  const displayName = user?.email.split('@')[0] || 'User';
 
   return (
     <Dropdown
@@ -37,7 +49,7 @@ export const UserDropdown: React.FunctionComponent = () => {
           onClick={toggle}
           aria-label="User menu"
         >
-          User Lastname
+          {displayName}
         </MenuToggle>
       )}
     >
@@ -45,7 +57,7 @@ export const UserDropdown: React.FunctionComponent = () => {
         <DropdownItem key="account" to="/account" component="button" icon={<UserIcon />}>
           My Account
         </DropdownItem>
-        <DropdownItem key="logout" icon={<SignOutAltIcon />}>
+        <DropdownItem key="logout" icon={<SignOutAltIcon />} onClick={handleLogout}>
           Log out
         </DropdownItem>
       </DropdownList>

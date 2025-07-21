@@ -1,13 +1,8 @@
 import {
-  Flex,
-  FlexItem,
   MastheadBrand,
   MastheadContent,
   MastheadMain,
   MastheadToggle,
-  Nav,
-  NavItem,
-  NavList,
   Masthead as PFMasthead,
   PageToggleButton,
   Title,
@@ -15,20 +10,12 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
-  Dropdown,
-  DropdownItem,
-  DropdownList,
-  MenuToggle,
-  type MenuToggleElement,
-  Avatar,
-  Divider,
 } from '@patternfly/react-core';
 
-import { Link, useLocation } from '@tanstack/react-router';
-import { BarsIcon, CogIcon, EllipsisVIcon } from '@patternfly/react-icons';
+import { useLocation } from '@tanstack/react-router';
+import { BarsIcon } from '@patternfly/react-icons';
 import { Search } from './search';
 import { UserDropdown } from './user-dropdown';
-import { useState } from 'react';
 
 export const themeStorageKey = 'app-theme';
 
@@ -44,7 +31,6 @@ export function Masthead({
   onSidebarToggle,
 }: MastheadProps) {
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggle =
     showSidebarToggle && onSidebarToggle ? (
@@ -58,17 +44,6 @@ export function Masthead({
         <BarsIcon />
       </PageToggleButton>
     ) : null;
-
-  const mobileMenuToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      aria-label="User menu"
-      variant="plain"
-    >
-      <EllipsisVIcon />
-    </MenuToggle>
-  );
 
   const toolbar = (
     <Toolbar isFullHeight>

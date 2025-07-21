@@ -1,17 +1,17 @@
 import { PageSection, Title } from '@patternfly/react-core';
 import { GalleryView } from './Gallery';
 import { GallerySkeleton } from './gallery-skeleton';
-import { FakerProducts } from './faker-products';
+// Note: faker-products was removed, using fetchCatalog instead
 import { fetchCatalog } from '../services/products';
 import { useQuery } from '@tanstack/react-query';
 
 export function CatalogPage() {
-  const { data, error, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['catalog'], // A unique key for this query
     queryFn: fetchCatalog, // The async function to fetch data
   });
 
-  const products = data ? data : FakerProducts();
+  const products = data ?? [];
 
   return (
     <>

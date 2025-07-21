@@ -2,7 +2,6 @@ import type { ProductData } from '../types';
 import {
   ApiLogger,
   ServiceLogger,
-  type LogContext,
   type ApiRequestOptions,
 } from '../utils/logging/logger';
 
@@ -116,5 +115,23 @@ export const searchProducts = async (query: string): Promise<ProductData[]> => {
 
   return apiRequest<ProductData[]>(endpoint, 'searchProducts-fallback', {
     headers: { 'X-Original-Search-Query': query },
+  });
+};
+
+export const fetchProduct = async (productId: string): Promise<ProductData> => {
+  ServiceLogger.logServiceCall('fetchProduct', { productId });
+  return apiRequest<ProductData>(`/api/products/${productId}`, 'fetchProduct');
+};
+
+export const fetchSearch = async (): Promise<ProductData[]> => {
+  ServiceLogger.logServiceCall('fetchSearch');
+  return apiRequest<ProductData[]>('/api/products/search', 'fetchSearch');
+};
+
+export const editCart = async (cartItem: any) => {
+  ServiceLogger.logServiceCall('editCart', { cartItem });
+  return apiRequest<any>('/api/cart', 'editCart', {
+    method: 'POST',
+    body: cartItem,
   });
 };

@@ -1,63 +1,108 @@
-import { PageSection, Title } from "@patternfly/react-core";
-import { Carousel } from "./Carousel/carousel";
-import { faker } from "@faker-js/faker";
-import { GalleryView } from "./gallery";
-
-
-interface ProductData {
-  id: number;
-  title: string;
-  description: string;
-  price: string;
-  imageUrl: string;
-  rating: string;
-}
+import {
+  PageSection,
+  Title,
+  Card,
+  CardBody,
+  DescriptionList,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  DescriptionListDescription,
+  Spinner,
+  Alert,
+} from '@patternfly/react-core';
+import { Carousel } from './Carousel/Carousel';
+import { GalleryView } from './Gallery';
+import { useAuth } from '../contexts/AuthProvider';
 
 export function AccountPage() {
-  function capitalizeFirstLetter(val: string) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+  const { user, isLoading, isAuthenticated } = useAuth();
+
+  // Placeholder empty arrays for demo
+  const productsRecommended: any[] = [];
+  const highlyRecProducts: any[] = [];
+  const trendingProducts: any[] = [];
+
+  if (isLoading) {
+    return (
+      <PageSection>
+        <Spinner size="lg" />
+      </PageSection>
+    );
   }
 
-  // Fetch Product Recommendations from backend
-  function createRandomProducts() {
-    const myProduct: ProductData = {
-      id: faker.number.int(),
-      title: capitalizeFirstLetter(
-        faker.word.noun({ length: { min: 5, max: 7 } })
-      ),
-      description: faker.lorem.lines(1),
-      price: faker.finance.amount({ min: 5, max: 20, dec: 2, symbol: "$" }),
-      imageUrl: faker.image.urlLoremFlickr(),
-      rating: faker.finance.amount({ min: 0, max: 5, dec: 2 }),
-    };
-    return myProduct;
+  if (!isAuthenticated || !user) {
+    return (
+      <PageSection>
+        <Alert variant="warning" title="Authentication Required">
+          Please log in to view your account page.
+        </Alert>
+      </PageSection>
+    );
   }
-  const productsRecommended = faker.helpers.multiple(createRandomProducts, {
-    count: 10,
-  });
-  const highlyRecProducts = faker.helpers.multiple(createRandomProducts, {
-    count: 5,
-  });
-  const trendingProducts = faker.helpers.multiple(createRandomProducts, {
-    count: 8,
-  });
 
   return (
     <>
+      {/* User Profile Section */}
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
-          Product Recommendations
+        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+          My Account
+        </Title>
+        <Card style={{ marginTop: '20px' }}>
+          <CardBody>
+            <Title headingLevel="h2" size="lg">
+              Profile Information
+            </Title>
+            <DescriptionList isHorizontal>
+              <DescriptionListGroup>
+                <DescriptionListTerm>Email</DescriptionListTerm>
+                <DescriptionListDescription>{user.email}</DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>User ID</DescriptionListTerm>
+                <DescriptionListDescription>{user.user_id}</DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>Age</DescriptionListTerm>
+                <DescriptionListDescription>{user.age}</DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>Gender</DescriptionListTerm>
+                <DescriptionListDescription>{user.gender}</DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>Member Since</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {new Date(user.signup_date).toLocaleDateString()}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>Preferences</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {user.preferences || 'No preferences set'}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </CardBody>
+        </Card>
+      </PageSection>
+
+      {/* Product Recommendations Section */}
+      <PageSection hasBodyWrapper={false}>
+        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
+          Product Recommendations for {user.email.split('@')[0]}
         </Title>
       </PageSection>
       <Carousel products={productsRecommended} />
+
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
+        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
           Trending Products
         </Title>
         <GalleryView products={trendingProducts} />
       </PageSection>
+
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
+        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
           Highly Recommended
         </Title>
         <Carousel products={highlyRecProducts} />
