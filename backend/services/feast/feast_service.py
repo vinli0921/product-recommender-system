@@ -40,6 +40,12 @@ class FeastService:
             self.user_encoder = self._load_user_encoder()
             self.user_service = self.store.get_feature_service("user_service")
             self.dataset_provider = LocalDatasetProvider(self.store, data_dir='services/feast/data') # TODO: remove path when Feast is the issue
+            print("[Feast] Initializing ClipEncoder...")
+            self.clip_encoder = ClipEncoder()
+            print("[Feast] ClipEncoder initialized.")
+            print("[Feast] Initializing SearchByImageService...")
+            self.search_by_image_service = SearchByImageService(self.store, self.clip_encoder)
+            print("[Feast] SearchByImageService initialized.")
 
     def _load_model_version(self):
         """
@@ -162,8 +168,6 @@ class FeastService:
         Perform image-based product search using an image URL.
         Returns top-k similar items.
         """
-        clip_encoder = ClipEncoder()
-        search_image_service = SearchByImageService(self.store, clip_encoder)
         try:
             # Manually check if the image is reachable and decodable
             resp = requests.get(image_link, timeout=100)
@@ -177,7 +181,7 @@ class FeastService:
             print(f"[Validation] Could not fetch/validate image: {e}")
             raise ValueError("Invalid or unreachable image URL.")
         try:
-            results_df = search_image_service.search_by_image_link(image_link, k)
+            results_df = self.search_by_image_service.search_by_image_link(image_link, k)
             print(results_df)
             top_item_ids = results_df["item_id"].tolist()
             return self._item_ids_to_product_list(top_item_ids)
@@ -188,17 +192,7 @@ class FeastService:
     def search_item_by_image_file(self, image: PILImage.Image, k=5):
         print("[Feast] Starting search_item_by_image_file")
         try:
-            try:
-                clip_encoder = ClipEncoder()
-                print("[Feast] ClipEncoder initialized")
-            except Exception as e:
-                print(f"[Feast Error] ClipEncoder init failed: {e}")
-                raise ValueError("ClipEncoder failed to load")
-
-            search_service = SearchByImageService(self.store, clip_encoder)
-            print("[Feast] SearchByImageService initialized")
-
-            results_df = search_service.search_by_image(image, k)
+            results_df = self.search_by_image_service.search_by_image(image, k)
             print("[Feast] search_by_image() completed")
             print(results_df)
 
