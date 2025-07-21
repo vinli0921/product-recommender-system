@@ -44,11 +44,11 @@ class KafkaService:
                 "optional": False,
             }, {
                 "field": "rating",
-                "type": "int32",
+                "type": "float64",
                 "optional": True,
             }, {
                 "field": "quantity",
-                "type": "int32",
+                "type": "float64",
                 "optional": True,
             }, {
                 "field": "interaction_id",
