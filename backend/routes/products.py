@@ -1,29 +1,69 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from typing import List
 from models import Product
 from services.kafka_service import KafkaService
+from services.feast.feast_service import FeastService
+from routes.auth import get_current_user  # to resolve JWT user
+from io import BytesIO
+from PIL import Image, UnidentifiedImageError
 
 router = APIRouter()
 
 @router.get("/products/search", response_model=List[Product])
-async def search_products_by_text(query: str):
+async def search_products_by_text(query: str, k: int = 5):
     """
     Search products by text query
     """
-    # Logic for text-based search
-    return []
+    try:
+        feast = FeastService()
+        return feast.search_item_by_text(query, k)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/products/search/image", response_model=List[Product])
-async def search_products_by_image(image):
+
+@router.get("/products/search/image_link", response_model=List[Product])
+async def search_products_by_image_link(image_link: str, k: int = 5):
     """
-    Search products by image
+    Search products by image_link
     """
-    # Logic for image-based search
-    # You would typically process the image file here (e.g., save it, send to an ML model)
-    return []
+    try:
+        feast = FeastService()
+        return feast.search_item_by_image_link(image_link, k)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/products/search/image", response_model=List[Product])
+async def search_products_by_image(image: UploadFile = File(...), k: int = 5):
+    """
+    Search products by image - Not fully ready yet
+    """
+    try:
+        contents = await image.read()
+        try:
+            # Try decoding the image in memory
+            pil_image = Image.open(BytesIO(contents))
+            pil_image.verify()  # Just checks integrity
+            pil_image = Image.open(BytesIO(contents))  # Reopen after verify
+            print(f"Image mode: {pil_image.mode}, size: {pil_image.size}, format: {pil_image.format}")
+        except UnidentifiedImageError as e:
+            print(f"[ImageError] Cannot identify image: {e}")
+            raise HTTPException(status_code=400, detail="Unsupported or invalid image format.")
+        except Exception as e:
+            print(f"[ImageError] General image load error: {e}")
+            raise HTTPException(status_code=400, detail="Failed to process uploaded image.")
+
+        feast = FeastService()
+        return feast.search_item_by_image_file(pil_image, k)
+
+    except HTTPException:
+        raise  # Pass through
+    except Exception as e:
+        print(f"[InternalError] {e}")
+        raise HTTPException(status_code=500, detail="Unexpected server error during image search.")
 
 @router.get("/products/{product_id}", response_model=Product)
-async def get_product(product_id: int, user_id: str):
+async def get_product(product_id: str, user_id = Depends(get_current_user)):
     """
     Get product details by ID
     """
@@ -34,11 +74,14 @@ async def get_product(product_id: int, user_id: str):
         interaction_type='negative_view'
     )
     
-    # TODO: read from DB
-    raise HTTPException(status_code=501, detail="Not implemented")
+    try:
+        feast = FeastService()
+        return feast.get_item_by_id(product_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/products/{product_id}/interactions/click", status_code=204)
-async def record_product_click(product_id: int, user_id: str):
+async def record_product_click(product_id: str, user_id = Depends(get_current_user)):
     """
     Records a product click interaction event
     """
