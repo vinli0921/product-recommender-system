@@ -56,7 +56,7 @@ install: namespace depend
 		$(PGVECTOR_ARGS) \
 		$(DATASET_ARGS) \
 		$(EXTRA_HELM_ARGS) --set strimzi-kafka-operator.createGlobalResources=false --timeout 300m
-	@echo "Waiting for model services and llamastack to deploy. It may take around 10-15 minutes depending on the size of the model..."
+	@echo "Waiting for model services to deploy. It may take around 10-15 minutes depending on the size of the database..."
 	@oc rollout status deploy
 	@echo "$(HELM_CHART) installed successfully"
 
