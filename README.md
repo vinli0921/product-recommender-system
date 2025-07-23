@@ -89,6 +89,7 @@ Depend on the scale and speed required, for small amount of users have minimus o
 ### Required software 
 
 * `oc` command installed
+* `helm` command installed
 * Red Hat OpenShift.
 * Red Hat OpenShift AI version 2.2 and above.
 * Red Hat Authorino Operator (stable update channel, version 1.2.1 or later)

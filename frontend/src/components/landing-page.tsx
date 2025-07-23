@@ -1,22 +1,53 @@
-import { FlexItem, Skeleton, Title } from "@patternfly/react-core";
-import { fetchRecommendations } from "../services/products";
-import { useQuery } from "@tanstack/react-query";
-import { GalleryView } from "./Gallery";
+import { PageSection, Title, Spinner, Alert } from '@patternfly/react-core';
+import { GalleryView } from './Gallery';
+import { usePersonalizedRecommendations } from '../hooks/useRecommendations';
+import { useAuth } from '../contexts/AuthProvider';
 
 export function LandingPage() {
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["recommnedations"], // A unique key for this query
-    queryFn: fetchRecommendations, // The async function to fetch data
-  });
+  const { isAuthenticated } = useAuth();
+  const { data, isLoading, error } = usePersonalizedRecommendations();
+
+  // If not authenticated, show a message prompting to log in
+  if (!isAuthenticated) {
+    return (
+      <PageSection hasBodyWrapper={false}>
+        <Title headingLevel="h1" style={{ marginTop: '15px' }}>
+          Welcome to Product Recommendations
+        </Title>
+        <Alert variant="info" title="Authentication Required">
+          Please log in to see personalized product recommendations tailored just for you!
+        </Alert>
+      </PageSection>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <PageSection>
+        <Spinner size="lg" />
+      </PageSection>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageSection>
+        <Alert variant="danger" title="Error">
+          Sorry, we couldn't load your personalized recommendations right now. Please try again
+          later.
+        </Alert>
+      </PageSection>
+    );
+  }
 
   return (
-      <FlexItem>
-        <Title headingLevel={"h1"} style={{ paddingBottom: 20 }}>Product Recommendations</Title>
-        {isLoading ? (
-          <Skeleton style={{ height: 200 }} />
-        ) : (
-          isError ? <div>Error fetching recommendations</div> : <GalleryView products={data ?? []} />
-        )}
-      </FlexItem>
+    <>
+      <PageSection hasBodyWrapper={false}>
+        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+          Recommended for You
+        </Title>
+      </PageSection>
+      <GalleryView products={data || []} />
+    </>
   );
 }

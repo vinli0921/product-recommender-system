@@ -7,10 +7,10 @@ import {
   Divider,
   Flex,
   FlexItem,
-} from "@patternfly/react-core";
-import { auto } from "@patternfly/react-core/dist/esm/helpers/Popper/thirdparty/popper-core";
-import { StarIcon } from "@patternfly/react-icons";
-import type { ProductData } from "../types";
+} from '@patternfly/react-core';
+import { auto } from '@patternfly/react-core/dist/esm/helpers/Popper/thirdparty/popper-core';
+import { StarIcon } from '@patternfly/react-icons';
+import type { ProductData } from '../types';
 
 type ProductCardProps = {
   product: ProductData;
@@ -23,11 +23,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
   const actionId = `card-article-input-${curCardCount}`;
   const cardTitleId = `featured-blog-post-${curCardCount}-title`;
 
-  const price = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  const price = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
   }).format(product.price);
-  const rating = new Intl.NumberFormat("en-US", {
+  const rating = new Intl.NumberFormat('en-US', {
     minimumIntegerDigits: 1,
     minimumFractionDigits: 2,
   }).format(product.rating);
@@ -43,10 +43,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
       <CardHeader
         className="v6-featured-posts-card-header-img"
         selectableActions={{
-          to: "#",
+          to: `/product/${product.id}`,
           selectableActionId: actionId,
           selectableActionAriaLabelledby: cardTitleId,
-          name: "homepage-card",
+          name: 'homepage-card',
           isExternalLink: true,
         }}
         style={{
@@ -56,15 +56,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
       ></CardHeader>
       <Divider />
       <CardTitle id={cardTitleId}>
-        <Flex style={{ justifyContent: "space-between" }}>
+        <Flex style={{ justifyContent: 'space-between' }}>
           <FlexItem>{product.title}</FlexItem>
           <FlexItem>
             {rating} <StarIcon />
           </FlexItem>
         </Flex>
       </CardTitle>
-      <CardBody style={{ color: "#707070" }}>{product.description}</CardBody>
-      <CardFooter style={{ color: "#1F1F1F" }}>{price}</CardFooter>
+      <CardBody style={{ color: '#707070' }}>{product.description}</CardBody>
+      <CardFooter style={{ color: '#1F1F1F' }}>{price}</CardFooter>
     </Card>
   );
 };

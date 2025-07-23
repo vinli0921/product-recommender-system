@@ -1,41 +1,51 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   LoginForm,
-  LoginMainFooterBandItem,
   LoginPage,
+  LoginMainFooterBandItem,
   ListVariant,
-} from "@patternfly/react-core";
-import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import { Link } from "@tanstack/react-router";
+  Button,
+} from '@patternfly/react-core';
+import { Link } from '@tanstack/react-router';
+
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useLogin } from '../hooks/useAuth';
 
 export const SimpleLoginPage: React.FunctionComponent = () => {
-  const [showHelperText, setShowHelperText] = useState(false);
-  const [username, setUsername] = useState("");
-  const [isValidUsername, setIsValidUsername] = useState(true);
-  const [password, setPassword] = useState("");
-  const [isValidPassword, setIsValidPassword] = useState(true);
+  const loginMutation = useLogin();
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleUsernameChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string
-  ) => {
-    setUsername(value);
-  };
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string
-  ) => {
-    setPassword(value);
-  };
-
-  const onLoginButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
-    setIsValidUsername(!!username);
-    setIsValidPassword(!!password);
-    setShowHelperText(!username || !password);
+
+    // Simple validation
+    if (!formData.email.trim()) {
+      setErrorMessage('Email is required');
+      return;
+    }
+    if (!formData.password.trim()) {
+      setErrorMessage('Password is required');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setErrorMessage('Please enter a valid email address');
+      return;
+    }
+
+    try {
+      setErrorMessage('');
+      await loginMutation.mutateAsync({
+        email: formData.email,
+        password: formData.password,
+      });
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Login failed. Please try again.');
+    }
   };
 
   const signUpForAccountMessage = (
@@ -46,25 +56,48 @@ export const SimpleLoginPage: React.FunctionComponent = () => {
 
   const forgotCredentials = (
     <LoginMainFooterBandItem>
-      {/* <a href="">Forgot username or password?</a> */}
+      <div style={{ color: '#6a6e73', fontSize: '14px' }}>💡 Try: demo1@example.com / demo123</div>
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{ marginTop: '0.5rem' }}>
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => {
+              setFormData({ email: 'demo1@example.com', password: 'demo123' });
+            }}
+          >
+            🚀 Quick Test Login
+          </Button>
+        </div>
+      )}
     </LoginMainFooterBandItem>
   );
 
   const loginForm = (
     <LoginForm
-      showHelperText={showHelperText}
-      helperText="Invalid login credentials."
-      helperTextIcon={<ExclamationCircleIcon />}
-      usernameLabel="Email/UserID"
-      usernameValue={username}
-      onChangeUsername={handleUsernameChange}
-      isValidUsername={isValidUsername}
+      showHelperText={!!errorMessage}
+      helperText={errorMessage || 'Please enter your credentials'}
+      helperTextIcon={errorMessage ? <ExclamationCircleIcon /> : undefined}
+      usernameLabel="Email"
+      usernameValue={formData.email}
+      onChangeUsername={(_event, value) => {
+        setFormData((prev) => ({ ...prev, email: value }));
+        setErrorMessage(''); // Clear errors when typing
+      }}
+      isValidUsername={true}
       passwordLabel="Password"
-      passwordValue={password}
-      onChangePassword={handlePasswordChange}
-      isValidPassword={isValidPassword}
+      passwordValue={formData.password}
+      onChangePassword={(_event, value) => {
+        setFormData((prev) => ({ ...prev, password: value }));
+        setErrorMessage(''); // Clear errors when typing
+      }}
+      isValidPassword={true}
       onLoginButtonClick={onLoginButtonClick}
-      loginButtonLabel="Log in"
+      loginButtonLabel={loginMutation.isPending ? 'Logging in...' : 'Log in'}
+      isLoginButtonDisabled={loginMutation.isPending}
+      rememberMeLabel="Keep me logged in"
+      isRememberMeChecked={false}
+      onChangeRememberMe={() => {}} // Could add remember me functionality later
     />
   );
 
@@ -72,6 +105,7 @@ export const SimpleLoginPage: React.FunctionComponent = () => {
     <LoginPage
       footerListVariants={ListVariant.inline}
       loginTitle="Log in to your account"
+      loginSubtitle="Enter your credentials to access your personalized recommendations"
       signUpForAccountMessage={signUpForAccountMessage}
       forgotCredentials={forgotCredentials}
     >

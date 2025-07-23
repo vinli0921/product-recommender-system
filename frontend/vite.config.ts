@@ -1,20 +1,19 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import path from 'path';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     // Please make sure that '@tanstack/router-plugin' is passed before '@vitejs/plugin-react'
-    TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
+    tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     react(),
     // ...,
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'), // This line maps '@/' to your 'src' directory
-      // You might have other aliases too
+      '@': resolve(process.cwd(), './src'), // This line maps '@/' to your 'src' directory
     },
   },
   server: {
@@ -22,6 +21,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

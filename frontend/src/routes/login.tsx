@@ -1,6 +1,6 @@
 import { Page, PageSection } from '@patternfly/react-core';
 import { createFileRoute } from '@tanstack/react-router';
-import { Masthead } from '../components/masthead';
+import { PublicMasthead } from '../components/public-masthead';
 import { SimpleLoginPage } from '../components/login';
 
 export const Route = createFileRoute('/login')({
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/login')({
 
 function Login() {
   return (
-    <Page masthead={<Masthead />}>
+    <Page masthead={<PublicMasthead />}>
       <PageSection hasBodyWrapper={false}>
         <SimpleLoginPage />
       </PageSection>
