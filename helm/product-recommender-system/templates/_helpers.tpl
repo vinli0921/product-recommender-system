@@ -116,7 +116,7 @@ spec:
       - name: EXPERIMENT_NAME
         value: 'Default'
       - name: RUN_NAME
-        value: '1'
+        value: '{{ now | date "2006_01_02_15_04_05" }}'
       - name: DS_PIPELINE_URL
         value: https://ds-pipeline-dspa.{{ .Release.Namespace }}.svc.cluster.local:8888
       - name: DB_SECRET_NAME

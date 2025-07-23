@@ -96,6 +96,50 @@ Depend on the scale and speed required, for small amount of users have minimus o
 * Red Hat OpenShift Serverless Operator
 * Red Hat OpenShift Service Mesh Operator
 
+#### Make sure you have configured
+Under openshiftAI DataScienceCluster CR change modelregistry, and feastoperator to `Managed` state which by default are on `Removed`:
+```
+apiVersion: datasciencecluster.opendatahub.io/v1
+kind: DataScienceCluster
+metadata:
+  name: default-dsc
+...
+spec:
+  components:
+    codeflare:
+      managementState: Managed
+    kserve:
+      managementState: Managed
+      nim:
+        managementState: Managed
+      rawDeploymentServiceConfig: Headless
+      serving:
+        ingressGateway:
+          certificate:
+            secretName: rhoai-letscrypt-cert
+            type: Provided
+        managementState: Managed
+        name: knative-serving
+    modelregistry:
+      managementState: Managed
+      registriesNamespace: rhoai-model-registries
+    feastoperator:
+      managementState: Managed
+    trustyai:
+      managementState: Managed
+    kueue:
+      managementState: Managed
+    workbenches:
+      managementState: Managed
+      workbenchNamespace: rhods-notebooks
+    dashboard:
+      managementState: Managed
+    modelmeshserving:
+      managementState: Managed
+    datasciencepipelines:
+      managementState: Managed
+```
+
 ### Required permissions
 
 * Standard user. No elevated cluster permissions required
@@ -126,7 +170,7 @@ Depend on the scale and speed required, for small amount of users have minimus o
    make install
    ```
 
-* Or installing and defining namespace together:
+* Or installing and defining a namespace together:
    ```bash
    # Replace <namespace> with your desired namespace and install in one command
    make install NAMESPACE=<namespace>
