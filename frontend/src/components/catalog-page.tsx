@@ -1,10 +1,10 @@
 import { PageSection, Title } from '@patternfly/react-core';
 import { GalleryView } from './Gallery';
 import { GallerySkeleton } from './gallery-skeleton';
-import { useRecommendations } from '../hooks';
+import { usePersonalizedRecommendations } from '../hooks/useRecommendations';
 
 export function CatalogPage() {
-  const { data, isLoading } = useRecommendations();
+  const { data, isLoading } = usePersonalizedRecommendations();
 
   const products = data ?? [];
 

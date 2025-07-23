@@ -68,34 +68,23 @@ export const authService = {
     return authResponse;
   },
 
-  // Get current user (we'll need to add this endpoint to backend)
+  // Get current user from backend
   getCurrentUser: async (): Promise<User> => {
-    const token = getToken();
-    if (!token) {
-      throw new Error('No token found');
-    }
+    const response = await apiCall('/auth/me');
 
-    // For now, we'll decode the token to get user info
-    // In a real app, you'd want a dedicated /auth/me endpoint
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (payload.exp * 1000 < Date.now()) {
+    if (!response.ok) {
+      if (response.status === 401) {
         removeToken();
-        throw new Error('Token expired');
+        localStorage.removeItem('user_data');
+        throw new Error('Authentication expired');
       }
-
-      // Since we don't have a /me endpoint, we'll need to store user data
-      // when logging in/signing up and retrieve it from localStorage
-      const userData = localStorage.getItem('user_data');
-      if (!userData) {
-        throw new Error('User data not found');
-      }
-
-      return JSON.parse(userData) as User;
-    } catch (error) {
-      removeToken();
-      throw new Error('Invalid token');
+      throw new Error('Failed to get user information');
     }
+
+    const user: User = await response.json();
+    // Update localStorage with fresh user data
+    storeUserData(user);
+    return user;
   },
 
   // Logout user
@@ -106,16 +95,34 @@ export const authService = {
 
   // Check if user is authenticated
   isAuthenticated: (): boolean => {
-    const token = getToken();
-    if (!token) return false;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 > Date.now();
-    } catch {
-      return false;
-    }
+    return validateToken().isValid;
   },
+};
+
+// Centralized token validation utility
+export const validateToken = (): { isValid: boolean; shouldRedirect: boolean } => {
+  const token = getToken();
+
+  if (!token) {
+    return { isValid: false, shouldRedirect: true };
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const isExpired = payload.exp * 1000 < Date.now();
+
+    if (isExpired) {
+      removeToken();
+      localStorage.removeItem('user_data');
+      return { isValid: false, shouldRedirect: true };
+    }
+
+    return { isValid: true, shouldRedirect: false };
+  } catch {
+    removeToken();
+    localStorage.removeItem('user_data');
+    return { isValid: false, shouldRedirect: true };
+  }
 };
 
 // Store user data in localStorage

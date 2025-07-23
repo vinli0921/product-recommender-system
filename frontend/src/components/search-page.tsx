@@ -1,9 +1,9 @@
 import { Skeleton, Title } from '@patternfly/react-core';
 import { GalleryView } from './Gallery';
-import { useRecommendations } from '../hooks';
+import { usePersonalizedRecommendations } from '../hooks/useRecommendations';
 
 export function SearchPage() {
-  const { data, isError, isLoading } = useRecommendations();
+  const { data, isError, isLoading } = usePersonalizedRecommendations();
 
   return (
     <div>

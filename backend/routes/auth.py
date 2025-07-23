@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 import random, string
 from datetime import date
+import os
 from models import SignUpRequest, LoginRequest, AuthResponse, User as UserResponse
 from database.models_sql import User
 from database.db import get_db
@@ -128,3 +129,24 @@ async def login(
         views=[],
     )
     return AuthResponse(user=user_response, token=token)
+
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_current_user_info(
+    current_user: User = Depends(get_current_user),
+):
+    """Get current authenticated user information"""
+    return UserResponse(
+        user_id=current_user.user_id,
+        email=current_user.email,
+        age=current_user.age,
+        gender=current_user.gender,
+        signup_date=current_user.signup_date,
+        preferences=current_user.preferences,
+        views=[],
+    )

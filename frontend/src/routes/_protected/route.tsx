@@ -1,41 +1,18 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { Page } from '@patternfly/react-core';
-import { Masthead } from '../../components/masthead';
+import { AppMasthead } from '../../components/app-masthead';
+import { validateToken } from '../../services/auth';
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: ({ location }) => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('auth_token');
+    // Use centralized token validation
+    const { shouldRedirect } = validateToken();
 
-    if (!token) {
+    if (shouldRedirect) {
       throw redirect({
         to: '/login',
         search: {
-          redirect: location.href,
-        },
-      });
-    }
-
-    // Basic token validation - check if it's expired
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (payload.exp * 1000 < Date.now()) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_data');
-        throw redirect({
-          to: '/login',
-          search: {
-            redirect: location.href,
-          },
-        });
-      }
-    } catch {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user_data');
-      throw redirect({
-        to: '/login',
-        search: {
-          redirect: location.href,
+          redirect: location.pathname + location.search,
         },
       });
     }
@@ -45,7 +22,7 @@ export const Route = createFileRoute('/_protected')({
 
 function ProtectedLayout() {
   return (
-    <Page masthead={<Masthead />}>
+    <Page masthead={<AppMasthead />}>
       <Outlet />
     </Page>
   );

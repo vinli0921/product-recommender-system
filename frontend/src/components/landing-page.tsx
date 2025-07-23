@@ -1,9 +1,25 @@
 import { PageSection, Title, Spinner, Alert } from '@patternfly/react-core';
 import { GalleryView } from './Gallery';
-import { useRecommendations } from '../hooks';
+import { usePersonalizedRecommendations } from '../hooks/useRecommendations';
+import { useAuth } from '../contexts/AuthProvider';
 
 export function LandingPage() {
-  const { data, isLoading, isError } = useRecommendations();
+  const { isAuthenticated } = useAuth();
+  const { data, isLoading, error } = usePersonalizedRecommendations();
+
+  // If not authenticated, show a message prompting to log in
+  if (!isAuthenticated) {
+    return (
+      <PageSection hasBodyWrapper={false}>
+        <Title headingLevel="h1" style={{ marginTop: '15px' }}>
+          Welcome to Product Recommendations
+        </Title>
+        <Alert variant="info" title="Authentication Required">
+          Please log in to see personalized product recommendations tailored just for you!
+        </Alert>
+      </PageSection>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -13,11 +29,12 @@ export function LandingPage() {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <PageSection>
         <Alert variant="danger" title="Error">
-          Failed to fetch recommendations. Please try again later.
+          Sorry, we couldn't load your personalized recommendations right now. Please try again
+          later.
         </Alert>
       </PageSection>
     );
@@ -27,7 +44,7 @@ export function LandingPage() {
     <>
       <PageSection hasBodyWrapper={false}>
         <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
-          Product Recommendations
+          Recommended for You
         </Title>
       </PageSection>
       <GalleryView products={data || []} />

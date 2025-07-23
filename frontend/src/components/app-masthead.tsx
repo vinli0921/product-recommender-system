@@ -17,19 +17,17 @@ import { BarsIcon } from '@patternfly/react-icons';
 import { Search } from './search';
 import { UserDropdown } from './user-dropdown';
 
-export const themeStorageKey = 'app-theme';
-
-interface MastheadProps {
+interface AppMastheadProps {
   showSidebarToggle?: boolean;
   isSidebarOpen?: boolean;
   onSidebarToggle?: () => void;
 }
 
-export function Masthead({
+export function AppMasthead({
   showSidebarToggle = false,
   isSidebarOpen = false,
   onSidebarToggle,
-}: MastheadProps) {
+}: AppMastheadProps) {
   const location = useLocation();
 
   const toggle =
@@ -70,15 +68,11 @@ export function Masthead({
   );
 
   const title =
-    location.pathname == '/search'
+    location.pathname === '/search'
       ? 'Search'
-      : location.pathname == '/account'
+      : location.pathname === '/account'
         ? 'My Account'
-        : location.pathname == '/login'
-          ? 'Login'
-          : location.pathname == '/signup'
-            ? 'Sign Up'
-            : 'Product Recommendations';
+        : 'Product Recommendations';
 
   return (
     <PFMasthead>

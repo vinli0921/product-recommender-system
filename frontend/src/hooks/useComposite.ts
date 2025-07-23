@@ -2,10 +2,11 @@
 import { useAuth } from '../contexts/AuthProvider';
 import { useProduct, useProductSearch } from './useProducts';
 import {
-  useRecommendations,
+  usePersonalizedRecommendations,
   useExistingUserRecommendations,
   useNewUserRecommendations,
 } from './useRecommendations';
+import type { ProductData } from '../types';
 import { useCart, useAddToCart } from './useCart';
 import { useWishlist, useAddToWishlist, useRemoveFromWishlist } from './useWishlist';
 import { useRecordProductClick } from './useInteractions';
@@ -171,8 +172,8 @@ export const useRecommendationsWithActions = () => {
   const { user } = useAuth();
   const userId = user?.user_id || '';
 
-  // Get the recommendations
-  const recommendationsQuery = useRecommendations();
+  // Get personalized recommendations
+  const recommendationsQuery = usePersonalizedRecommendations();
 
   // Get user's cart/wishlist data once for the entire list
   const cartQuery = useCart(userId);
@@ -223,7 +224,7 @@ export const useRecommendationsWithActions = () => {
 
     // Convenience: products with actions pre-attached
     productsWithActions:
-      recommendationsQuery.data?.map((product) => ({
+      recommendationsQuery.data?.map((product: ProductData) => ({
         ...product,
         actions: createProductActions(product.id.toString()),
       })) || [],
@@ -294,7 +295,7 @@ export const useSearchWithActions = (query: string, enabled: boolean = true) => 
 
     // Convenience: products with actions pre-attached
     productsWithActions:
-      searchQuery.data?.map((product) => ({
+      searchQuery.data?.map((product: ProductData) => ({
         ...product,
         actions: createProductActions(product.id.toString()),
       })) || [],

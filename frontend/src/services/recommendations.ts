@@ -2,14 +2,6 @@ import type { ProductData } from '../types';
 import { apiRequest, ServiceLogger } from './api';
 
 /**
- * Fetch general product recommendations (not user-specific)
- */
-export const fetchRecommendations = async (): Promise<ProductData[]> => {
-  ServiceLogger.logServiceCall('fetchRecommendations');
-  return apiRequest<ProductData[]>('/api/recommendations', 'fetchRecommendations');
-};
-
-/**
  * Fetch personalized recommendations for users with existing interaction history
  * These recommendations use the user's past behavior to suggest relevant products
  */
@@ -31,6 +23,6 @@ export const fetchNewUserRecommendations = async (
   ServiceLogger.logServiceCall('fetchNewUserRecommendations', { numRecommendations });
   return apiRequest<ProductData[]>('/api/recommendations', 'fetchNewUserRecommendations', {
     method: 'POST',
-    body: { num_recommendations: numRecommendations },
+    body: JSON.stringify({ num_recommendations: numRecommendations }),
   });
 };

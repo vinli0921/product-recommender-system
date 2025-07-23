@@ -19,6 +19,9 @@ def get_recommendations(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+
+
+
 # Input model for new user recommendations
 class NewUserRecommendationRequest(BaseModel):
     num_recommendations: int = 10

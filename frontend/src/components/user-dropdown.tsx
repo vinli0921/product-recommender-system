@@ -8,11 +8,12 @@ import {
   type MenuToggleElement,
 } from '@patternfly/react-core';
 import { UserIcon, SignOutAltIcon } from '@patternfly/react-icons';
-import { useAuth } from '../contexts/AuthProvider';
+import { useAuth, useLogout } from '../hooks/useAuth';
 
 export const UserDropdown: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isLoading, isAuthenticated, logout } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
+  const logoutMutation = useLogout();
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -23,7 +24,7 @@ export const UserDropdown: React.FunctionComponent = () => {
   };
 
   const handleLogout = () => {
-    logout();
+    logoutMutation.mutate();
     onSelect();
   };
 
@@ -57,8 +58,13 @@ export const UserDropdown: React.FunctionComponent = () => {
         <DropdownItem key="account" to="/account" component="button" icon={<UserIcon />}>
           My Account
         </DropdownItem>
-        <DropdownItem key="logout" icon={<SignOutAltIcon />} onClick={handleLogout}>
-          Log out
+        <DropdownItem
+          key="logout"
+          icon={<SignOutAltIcon />}
+          onClick={handleLogout}
+          isDisabled={logoutMutation.isPending}
+        >
+          {logoutMutation.isPending ? 'Logging out...' : 'Log out'}
         </DropdownItem>
       </DropdownList>
     </Dropdown>
