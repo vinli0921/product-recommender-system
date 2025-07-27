@@ -199,7 +199,3 @@ To uninstall the recommender system and clean up resources:
    ```bash
    # Replace <namespace> with your namespace
    make uninstall NAMESPACE=<namespace>
-
-## Run Tests
-
-TODO
