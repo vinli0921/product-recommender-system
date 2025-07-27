@@ -12,21 +12,21 @@ This project uses **Pino** for structured logging with specialized utilities for
 ### Import the loggers:
 
 ```typescript
-import { ApiLogger, ServiceLogger, logger } from '../utils/logging/logger';
+import { ApiLogger, ServiceLogger, logger } from "../utils/logging/logger";
 ```
 
 ### Service-level logging:
 
 ```typescript
 export const myService = async (param: string) => {
-  ServiceLogger.logServiceCall('myService', { param });
+  ServiceLogger.logServiceCall("myService", { param });
 
   try {
     // Your service logic here
     const result = await doSomething(param);
     return result;
   } catch (error) {
-    ServiceLogger.logServiceError('myService', error, { param });
+    ServiceLogger.logServiceError("myService", error, { param });
     throw error;
   }
 };
@@ -36,14 +36,14 @@ export const myService = async (param: string) => {
 
 ```typescript
 const makeApiCall = async () => {
-  const context = ApiLogger.startRequest('getUserData', '/api/users/123');
+  const context = ApiLogger.startRequest("getUserData", "/api/users/123");
 
   try {
-    const response = await fetch('/api/users/123');
+    const response = await fetch("/api/users/123");
     ApiLogger.logResponseReceived(context, response);
 
     if (!response.ok) {
-      ApiLogger.logError(context, new Error('Failed to fetch'), response);
+      ApiLogger.logError(context, new Error("Failed to fetch"), response);
       throw new Error(`HTTP ${response.status}`);
     }
 
@@ -62,18 +62,18 @@ const makeApiCall = async () => {
 ### Direct logging:
 
 ```typescript
-import logger from '../utils/logger';
+import logger from "../utils/logger";
 
 // Info logging
-logger.info({ userId: 123, action: 'login' }, 'User logged in');
+logger.info({ userId: 123, action: "login" }, "User logged in");
 
 // Warning logging
-logger.warn({ route: '/api/slow' }, 'Slow API response detected');
+logger.warn({ route: "/api/slow" }, "Slow API response detected");
 
 // Error logging
 logger.error(
   { error: error.message, stack: error.stack },
-  'Database connection failed'
+  "Database connection failed",
 );
 ```
 
@@ -116,7 +116,7 @@ The logger is configured in `logger.ts`:
 
 ```typescript
 const logger = pino({
-  level: import.meta.env.PROD ? 'info' : 'debug', // Debug logs in dev mode
+  level: import.meta.env.PROD ? "info" : "debug", // Debug logs in dev mode
   browser: { asObject: true }, // Browser compatibility
   timestamp: pino.stdTimeFunctions.isoTime, // ISO timestamps
 });
@@ -141,13 +141,13 @@ const logger = pino({
 
 ```javascript
 // Filter by log level
-console.filter(log => log.level === 'error');
+console.filter((log) => log.level === "error");
 
 // Filter by operation
-console.filter(log => log.operation === 'searchProducts');
+console.filter((log) => log.operation === "searchProducts");
 
 // Filter by service
-console.filter(log => log.service === 'fetchRecommendations');
+console.filter((log) => log.service === "fetchRecommendations");
 ```
 
 ## 🏗️ Best Practices
@@ -177,7 +177,7 @@ if (import.meta.env.PROD) {
   // Send to external logging service
   logger.addDestination({
     dest: {
-      write: log => {
+      write: (log) => {
         // Send to Datadog, Sentry, CloudWatch, etc.
         externalLoggingService.send(JSON.parse(log));
       },

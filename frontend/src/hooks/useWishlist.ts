@@ -1,13 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchWishlist,
   addToWishlist,
   removeFromWishlist,
-} from '../services/wishlist';
+} from "../services/wishlist";
 
 export const useWishlist = (userId?: string) => {
   return useQuery({
-    queryKey: ['wishlist', userId],
+    queryKey: ["wishlist", userId],
     queryFn: () => fetchWishlist(userId),
     staleTime: 2 * 60 * 1000, // Override: wishlist changes more frequently
   });
@@ -25,7 +25,7 @@ export const useAddToWishlist = () => {
       productId: string;
     }) => addToWishlist(userId, productId),
     onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
+      queryClient.invalidateQueries({ queryKey: ["wishlist", userId] });
     },
   });
 };
@@ -42,7 +42,7 @@ export const useRemoveFromWishlist = () => {
       productId: string;
     }) => removeFromWishlist(userId, productId),
     onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['wishlist', userId] });
+      queryClient.invalidateQueries({ queryKey: ["wishlist", userId] });
     },
   });
 };

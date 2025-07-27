@@ -3,10 +3,10 @@ import {
   Title,
   EmptyState,
   EmptyStateBody,
-} from '@patternfly/react-core';
-import { GalleryView } from './Gallery';
-import { GallerySkeleton } from './gallery-skeleton';
-import { useProductSearch } from '../hooks';
+} from "@patternfly/react-core";
+import { GalleryView } from "./Gallery";
+import { GallerySkeleton } from "./gallery-skeleton";
+import { useProductSearch } from "../hooks";
 
 interface SearchResultsPageProps {
   query: string;
@@ -21,7 +21,7 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
     return (
       <PageSection hasBodyWrapper={false}>
         <EmptyState>
-          <Title headingLevel='h4' size='lg'>
+          <Title headingLevel="h4" size="lg">
             No search query provided
           </Title>
           <EmptyStateBody>
@@ -35,7 +35,7 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
   if (isLoading) {
     return (
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           Search Results for "{query}"
         </Title>
         <GallerySkeleton count={8} />
@@ -47,7 +47,7 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
     return (
       <PageSection hasBodyWrapper={false}>
         <EmptyState>
-          <Title headingLevel='h4' size='lg'>
+          <Title headingLevel="h4" size="lg">
             Error searching for products
           </Title>
           <EmptyStateBody>
@@ -61,12 +61,12 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
   return (
     <>
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           Search Results for "{query}"
         </Title>
         {products.length === 0 ? (
           <EmptyState>
-            <Title headingLevel='h4' size='lg'>
+            <Title headingLevel="h4" size="lg">
               No products found
             </Title>
             <EmptyStateBody>

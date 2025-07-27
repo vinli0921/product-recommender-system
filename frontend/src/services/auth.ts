@@ -4,11 +4,11 @@ import type {
   SignUpRequest,
   AuthResponse,
   AuthError,
-} from '../types';
-import AuthLogger from '../utils/logging/authLogger';
+} from "../types";
+import AuthLogger from "../utils/logging/authLogger";
 
-const API_BASE = '/api';
-const TOKEN_KEY = 'auth_token';
+const API_BASE = "/api";
+const TOKEN_KEY = "auth_token";
 
 // Token management
 export const getToken = (): string | null => {
@@ -26,11 +26,11 @@ export const removeToken = (): void => {
 // API call helper with auth header
 const apiCall = async (
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> => {
   const token = getToken();
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
@@ -45,14 +45,14 @@ const apiCall = async (
 export const authService = {
   // Login user
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiCall('/auth/login', {
-      method: 'POST',
+    const response = await apiCall("/auth/login", {
+      method: "POST",
       body: JSON.stringify(credentials),
     });
 
     if (!response.ok) {
       const error: AuthError = await response.json();
-      throw new Error(error.detail || 'Login failed');
+      throw new Error(error.detail || "Login failed");
     }
 
     const authResponse: AuthResponse = await response.json();
@@ -62,14 +62,14 @@ export const authService = {
 
   // Sign up user
   signup: async (userData: SignUpRequest): Promise<AuthResponse> => {
-    const response = await apiCall('/auth/signup', {
-      method: 'POST',
+    const response = await apiCall("/auth/signup", {
+      method: "POST",
       body: JSON.stringify(userData),
     });
 
     if (!response.ok) {
       const error: AuthError = await response.json();
-      throw new Error(error.detail || 'Signup failed');
+      throw new Error(error.detail || "Signup failed");
     }
 
     const authResponse: AuthResponse = await response.json();
@@ -79,15 +79,15 @@ export const authService = {
 
   // Get current user from backend
   getCurrentUser: async (): Promise<User> => {
-    const response = await apiCall('/auth/me');
+    const response = await apiCall("/auth/me");
 
     if (!response.ok) {
       if (response.status === 401) {
         removeToken();
-        localStorage.removeItem('user_data');
-        throw new Error('Authentication expired');
+        localStorage.removeItem("user_data");
+        throw new Error("Authentication expired");
       }
-      throw new Error('Failed to get user information');
+      throw new Error("Failed to get user information");
     }
 
     const user: User = await response.json();
@@ -99,7 +99,7 @@ export const authService = {
   // Logout user
   logout: (): void => {
     removeToken();
-    localStorage.removeItem('user_data');
+    localStorage.removeItem("user_data");
   },
 
   // Check if user is authenticated
@@ -120,24 +120,24 @@ export const validateToken = (): {
   }
 
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     const isExpired = payload.exp * 1000 < Date.now();
 
     if (isExpired) {
       removeToken();
-      localStorage.removeItem('user_data');
+      localStorage.removeItem("user_data");
       return { isValid: false, shouldRedirect: true };
     }
 
     return { isValid: true, shouldRedirect: false };
   } catch {
     removeToken();
-    localStorage.removeItem('user_data');
+    localStorage.removeItem("user_data");
     return { isValid: false, shouldRedirect: true };
   }
 };
 
 // Store user data in localStorage
 export const storeUserData = (user: User): void => {
-  localStorage.setItem('user_data', JSON.stringify(user));
+  localStorage.setItem("user_data", JSON.stringify(user));
 };

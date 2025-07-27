@@ -125,10 +125,10 @@ const UserDropdown = () => {
 
 ```typescript
 // ❌ Don't use context directly in components
-import { useAuth } from '../contexts/AuthProvider';
+import { useAuth } from "../contexts/AuthProvider";
 
 // ✅ Use dedicated auth hooks instead
-import { useAuth, useLogin, useLogout } from '../hooks/useAuth';
+import { useAuth, useLogin, useLogout } from "../hooks/useAuth";
 
 const MyComponent = () => {
   // ✅ Get user state from context
@@ -358,7 +358,7 @@ const queryClient = new QueryClient({
     },
     mutations: {
       retry: 1, // Only retry once
-      networkMode: 'online',
+      networkMode: "online",
     },
   },
 });
@@ -376,11 +376,11 @@ const queryClient = new QueryClient({
 
 ```typescript
 // ✅ Good - uses barrel export
-import { useProduct, useAddToCart, useLogin } from '../hooks';
+import { useProduct, useAddToCart, useLogin } from "../hooks";
 
 // ❌ Avoid - direct imports
-import { useProduct } from '../hooks/useProducts';
-import { useAddToCart } from '../hooks/useCart';
+import { useProduct } from "../hooks/useProducts";
+import { useAddToCart } from "../hooks/useCart";
 ```
 
 ### 2. Use Appropriate Hook for Context

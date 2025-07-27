@@ -1,7 +1,7 @@
-import { PageSection, Title } from '@patternfly/react-core';
-import { GalleryView } from './Gallery';
-import { GallerySkeleton } from './gallery-skeleton';
-import { usePersonalizedRecommendations } from '../hooks/useRecommendations';
+import { PageSection, Title } from "@patternfly/react-core";
+import { GalleryView } from "./Gallery";
+import { GallerySkeleton } from "./gallery-skeleton";
+import { usePersonalizedRecommendations } from "../hooks/useRecommendations";
 
 export function CatalogPage() {
   const { data, isLoading } = usePersonalizedRecommendations();
@@ -11,7 +11,7 @@ export function CatalogPage() {
   return (
     <>
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           Catalog
         </Title>
         {isLoading ? (

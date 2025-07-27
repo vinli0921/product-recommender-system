@@ -35,7 +35,7 @@ services/
 ### Usage
 
 ```typescript
-import { authService, validateToken } from '../services/auth';
+import { authService, validateToken } from "../services/auth";
 
 // Login
 const authResponse = await authService.login({ email, password });
@@ -68,10 +68,10 @@ Shared utility for all API calls with:
 - Type-safe responses
 
 ```typescript
-import { apiRequest } from './api';
+import { apiRequest } from "./api";
 
 // Usage in service functions
-const data = await apiRequest<ProductData[]>('/api/products', 'fetchProducts');
+const data = await apiRequest<ProductData[]>("/api/products", "fetchProducts");
 ```
 
 ## Error Handling

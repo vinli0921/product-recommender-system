@@ -1,6 +1,6 @@
-import { Gallery, GalleryItem } from '@patternfly/react-core';
-import { ProductCardSkeleton } from './product-card-skeleton';
-import './Carousel/carousel.css';
+import { Gallery, GalleryItem } from "@patternfly/react-core";
+import { ProductCardSkeleton } from "./product-card-skeleton";
+import "./Carousel/carousel.css";
 
 interface GallerySkeletonProps {
   count?: number; // Number of skeleton cards to display, defaults to 12
@@ -13,14 +13,14 @@ export const GallerySkeleton: React.FunctionComponent<GallerySkeletonProps> = ({
   const skeletonIndices = Array.from({ length: count }, (_, i) => i);
 
   return (
-    <div className='gallery-container'>
+    <div className="gallery-container">
       <Gallery hasGutter>
-        {skeletonIndices.map(index => (
+        {skeletonIndices.map((index) => (
           <GalleryItem
-            className='cards-container'
+            className="cards-container"
             style={{
-              marginTop: '15px',
-              overflow: 'hidden',
+              marginTop: "15px",
+              overflow: "hidden",
             }}
             key={`skeleton-${index}`}
           >

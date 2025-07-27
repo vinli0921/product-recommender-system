@@ -13,7 +13,7 @@ The `AuthProvider` is already configured in `main.tsx` and wraps your entire app
 The main hook you'll use for all authentication needs:
 
 ```tsx
-import { useAuth } from '../contexts/AuthProvider';
+import { useAuth } from "../contexts/AuthProvider";
 
 function MyComponent() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -37,31 +37,31 @@ function MyComponent() {
 ### Full auth context with login, signup, and logout functions:
 
 ```tsx
-import { useAuth } from '../contexts/AuthProvider';
+import { useAuth } from "../contexts/AuthProvider";
 
 function LoginComponent() {
   const { login, signup, logout, isLoading, user, isAuthenticated } = useAuth();
 
   const handleLogin = async () => {
     try {
-      await login({ email: 'user@example.com', password: 'password' });
+      await login({ email: "user@example.com", password: "password" });
       // User is now logged in, navigate to dashboard
     } catch (error) {
-      console.error('Login failed:', error.message);
+      console.error("Login failed:", error.message);
     }
   };
 
   const handleSignup = async () => {
     try {
       await signup({
-        email: 'user@example.com',
-        password: 'password',
+        email: "user@example.com",
+        password: "password",
         age: 25,
-        gender: 'Other',
+        gender: "Other",
       });
       // User is now signed up and logged in
     } catch (error) {
-      console.error('Signup failed:', error.message);
+      console.error("Signup failed:", error.message);
     }
   };
 
@@ -80,10 +80,10 @@ function LoginComponent() {
       ) : (
         <>
           <button onClick={handleLogin} disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
           <button onClick={handleSignup} disabled={isLoading}>
-            {isLoading ? 'Signing up...' : 'Sign Up'}
+            {isLoading ? "Signing up..." : "Sign Up"}
           </button>
         </>
       )}
@@ -97,8 +97,8 @@ function LoginComponent() {
 You can create protected routes by checking authentication status:
 
 ```tsx
-import { useAuth } from '../contexts/AuthProvider';
-import { Navigate } from '@tanstack/react-router';
+import { useAuth } from "../contexts/AuthProvider";
+import { Navigate } from "@tanstack/react-router";
 
 function ProtectedPage() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -106,7 +106,7 @@ function ProtectedPage() {
   if (isLoading) return <div>Loading...</div>;
 
   if (!isAuthenticated) {
-    return <Navigate to='/login' />;
+    return <Navigate to="/login" />;
   }
 
   return <div>This is a protected page!</div>;
