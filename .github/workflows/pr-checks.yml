@@ -40,14 +40,27 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           pip install flake8 black isort
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend && npm ci
+
+      - name: Install UI dependencies
+        run: |
+          cd ui && npm ci
 
       - name: Run flake8 (warning only)
         run: |
           echo "🔍 Running flake8 checks..."
-          flake8 --max-line-length=99 --extend-ignore=E203,W503 . || {
+          flake8 --extend-ignore=E203,W503 backend || {
             echo "::warning::Flake8 found code style issues"
             echo "Run 'flake8 .' locally to see details"
           }
@@ -55,7 +68,7 @@ jobs:
       - name: Check code formatting
         run: |
           echo "🎨 Checking code formatting..."
-          black --check --diff . || {
+          black --check --diff backend || {
             echo "::warning::Code formatting issues found"
             echo "Run 'black .' locally to fix formatting"
           }
@@ -63,7 +76,39 @@ jobs:
       - name: Check import sorting
         run: |
           echo "📦 Checking import sorting..."
-          isort --check-only --diff . || {
+          isort --check-only --diff backend || {
             echo "::warning::Import sorting issues found"
             echo "Run 'isort .' locally to fix imports"
+          }
+
+      - name: Run ESLint on frontend
+        run: |
+          echo "🔍 Running ESLint on frontend..."
+          cd frontend && npm run lint || {
+            echo "::warning::ESLint found issues in frontend"
+            echo "Run 'cd frontend && npm run lint' locally to see details"
+          }
+
+      - name: Run ESLint on UI
+        run: |
+          echo "🔍 Running ESLint on UI..."
+          cd ui && npm run lint || {
+            echo "::warning::ESLint found issues in UI"
+            echo "Run 'cd ui && npm run lint' locally to see details"
+          }
+
+      - name: Check Prettier formatting on frontend
+        run: |
+          echo "🎨 Checking Prettier formatting on frontend..."
+          cd frontend && npx prettier --check "src/**/*.{js,jsx,ts,tsx,json,css,md}" || {
+            echo "::warning::Prettier formatting issues found in frontend"
+            echo "Run 'cd frontend && npx prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"' locally to fix"
+          }
+
+      - name: Check Prettier formatting on UI
+        run: |
+          echo "🎨 Checking Prettier formatting on UI..."
+          cd ui && npx prettier --check "src/**/*.{js,jsx,json,css,md}" || {
+            echo "::warning::Prettier formatting issues found in UI"
+            echo "Run 'cd ui && npx prettier --write \"src/**/*.{js,jsx,json,css,md}\"' locally to fix"
           }
