@@ -1,7 +1,12 @@
-import { PageSection, Title, EmptyState, EmptyStateBody } from '@patternfly/react-core';
-import { GalleryView } from './Gallery';
-import { GallerySkeleton } from './gallery-skeleton';
-import { useProductSearch } from '../hooks';
+import {
+  PageSection,
+  Title,
+  EmptyState,
+  EmptyStateBody,
+} from "@patternfly/react-core";
+import { GalleryView } from "./Gallery";
+import { GallerySkeleton } from "./gallery-skeleton";
+import { useProductSearch } from "../hooks";
 
 interface SearchResultsPageProps {
   query: string;
@@ -19,7 +24,9 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
           <Title headingLevel="h4" size="lg">
             No search query provided
           </Title>
-          <EmptyStateBody>Please enter a search term to find products.</EmptyStateBody>
+          <EmptyStateBody>
+            Please enter a search term to find products.
+          </EmptyStateBody>
         </EmptyState>
       </PageSection>
     );
@@ -28,7 +35,7 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
   if (isLoading) {
     return (
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           Search Results for "{query}"
         </Title>
         <GallerySkeleton count={8} />
@@ -43,7 +50,9 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
           <Title headingLevel="h4" size="lg">
             Error searching for products
           </Title>
-          <EmptyStateBody>There was an error while searching. Please try again.</EmptyStateBody>
+          <EmptyStateBody>
+            There was an error while searching. Please try again.
+          </EmptyStateBody>
         </EmptyState>
       </PageSection>
     );
@@ -52,7 +61,7 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
   return (
     <>
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           Search Results for "{query}"
         </Title>
         {products.length === 0 ? (
@@ -61,7 +70,8 @@ export function SearchResultsPage({ query }: SearchResultsPageProps) {
               No products found
             </Title>
             <EmptyStateBody>
-              No products match your search for "{query}". Try different keywords.
+              No products match your search for "{query}". Try different
+              keywords.
             </EmptyStateBody>
           </EmptyState>
         ) : (

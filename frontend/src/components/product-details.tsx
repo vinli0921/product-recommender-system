@@ -7,10 +7,10 @@ import {
   Flex,
   FlexItem,
   Skeleton,
-} from '@patternfly/react-core';
-import StarRatings from 'react-star-ratings';
-import { useProductActions } from '../hooks';
-import { Route } from '../routes/_protected/product/$productId';
+} from "@patternfly/react-core";
+import StarRatings from "react-star-ratings";
+import { useProductActions } from "../hooks";
+import { Route } from "../routes/_protected/product/$productId";
 
 export const ProductDetails = () => {
   // loads productId from route /product/$productId
@@ -38,32 +38,32 @@ export const ProductDetails = () => {
   return (
     <>
       {isLoading ? (
-        <Skeleton style={{ flex: 1, minWidth: 0, height: '100%' }} />
+        <Skeleton style={{ flex: 1, minWidth: 0, height: "100%" }} />
       ) : (
         <>
-          <FlexItem style={{ flex: 1, minWidth: 0, height: '100%' }}>
-            <Card style={{ height: '100%' }}>
-              <CardBody style={{ height: '100%', padding: 0 }}>
+          <FlexItem style={{ flex: 1, minWidth: 0, height: "100%" }}>
+            <Card style={{ height: "100%" }}>
+              <CardBody style={{ height: "100%", padding: 0 }}>
                 <img
                   src={product.imageUrl}
                   alt={product.title}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
                   }}
                 />
               </CardBody>
             </Card>
           </FlexItem>
-          <FlexItem style={{ flex: 1, minWidth: 0, height: '100%' }}>
-            <Card isPlain style={{ height: '100%' }}>
-              <CardTitle style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+          <FlexItem style={{ flex: 1, minWidth: 0, height: "100%" }}>
+            <Card isPlain style={{ height: "100%" }}>
+              <CardTitle style={{ fontSize: "2rem", fontWeight: "bold" }}>
                 {product.title}
               </CardTitle>
               <CardBody>
-                <Flex direction={{ default: 'column' }}>
+                <Flex direction={{ default: "column" }}>
                   <FlexItem>
                     <StarRatings
                       rating={product.rating}
@@ -72,7 +72,7 @@ export const ProductDetails = () => {
                       name="rating"
                       starDimension="18px"
                       starSpacing="1px"
-                    />{' '}
+                    />{" "}
                     {product.rating}
                   </FlexItem>
                   <FlexItem headers="h1">${product.price}</FlexItem>
@@ -88,7 +88,7 @@ export const ProductDetails = () => {
                       isLoading={isAddingToCart}
                       isDisabled={isAddingToCart}
                     >
-                      {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+                      {isAddingToCart ? "Adding..." : "Add to Cart"}
                     </Button>
                   </FlexItem>
                   <FlexItem>

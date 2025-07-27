@@ -1,13 +1,16 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import Response
-from fastapi.exceptions import HTTPException
-from starlette.exceptions import HTTPException as StarletteHTTPException
-import httpx
 import sys
+
+import httpx
 import numpy as np
-from routes import auth, products, recommendations, cart, orders, wishlist, feedback, health, interactions, preferences
+from fastapi import FastAPI
+from fastapi.exceptions import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from routes import auth, health, preferences, products, recommendations
+
 # from routes import test
 
 app = FastAPI()
@@ -23,6 +26,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Custom StaticFiles class for SPA
 class SPAStaticFiles(StaticFiles):
@@ -41,18 +45,19 @@ class SPAStaticFiles(StaticFiles):
                 else:
                     raise ex
 
+
 # Include Routers
 # app.include_router(test.router)
 app.include_router(preferences.router)
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(products.router)
-#app.include_router(interactions.router)
+# app.include_router(interactions.router)
 app.include_router(recommendations.router)
-#app.include_router(cart.router)
-#app.include_router(orders.router)
-#app.include_router(wishlist.router)
-#app.include_router(feedback.router)
+# app.include_router(cart.router)
+# app.include_router(orders.router)
+# app.include_router(wishlist.router)
+# app.include_router(feedback.router)
 
 
 # Mount SPA static files at the root - this should be LAST

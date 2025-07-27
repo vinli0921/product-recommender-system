@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Avatar,
   Dropdown,
@@ -6,9 +6,9 @@ import {
   DropdownList,
   MenuToggle,
   type MenuToggleElement,
-} from '@patternfly/react-core';
-import { UserIcon, SignOutAltIcon } from '@patternfly/react-icons';
-import { useAuth, useLogout } from '../hooks/useAuth';
+} from "@patternfly/react-core";
+import { UserIcon, SignOutAltIcon } from "@patternfly/react-icons";
+import { useAuth, useLogout } from "../hooks/useAuth";
 
 export const UserDropdown: React.FunctionComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,14 +34,14 @@ export const UserDropdown: React.FunctionComponent = () => {
   }
 
   // Extract user's first name or use email as fallback
-  const displayName = user?.email.split('@')[0] || 'User';
+  const displayName = user?.email.split("@")[0] || "User";
 
   return (
     <Dropdown
       isOpen={isOpen}
       onSelect={onSelect}
       popperProps={{
-        position: 'right',
+        position: "right",
       }}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
@@ -55,7 +55,12 @@ export const UserDropdown: React.FunctionComponent = () => {
       )}
     >
       <DropdownList>
-        <DropdownItem key="account" to="/account" component="button" icon={<UserIcon />}>
+        <DropdownItem
+          key="account"
+          to="/account"
+          component="button"
+          icon={<UserIcon />}
+        >
           My Account
         </DropdownItem>
         <DropdownItem
@@ -64,7 +69,7 @@ export const UserDropdown: React.FunctionComponent = () => {
           onClick={handleLogout}
           isDisabled={logoutMutation.isPending}
         >
-          {logoutMutation.isPending ? 'Logging out...' : 'Log out'}
+          {logoutMutation.isPending ? "Logging out..." : "Log out"}
         </DropdownItem>
       </DropdownList>
     </Dropdown>

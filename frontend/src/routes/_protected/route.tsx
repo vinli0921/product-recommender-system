@@ -1,16 +1,16 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { Page } from '@patternfly/react-core';
-import { AppMasthead } from '../../components/app-masthead';
-import { validateToken } from '../../services/auth';
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { Page } from "@patternfly/react-core";
+import { AppMasthead } from "../../components/app-masthead";
+import { validateToken } from "../../services/auth";
 
-export const Route = createFileRoute('/_protected')({
+export const Route = createFileRoute("/_protected")({
   beforeLoad: ({ location }) => {
     // Use centralized token validation
     const { shouldRedirect } = validateToken();
 
     if (shouldRedirect) {
       throw redirect({
-        to: '/login',
+        to: "/login",
         search: {
           redirect: location.pathname + location.search,
         },

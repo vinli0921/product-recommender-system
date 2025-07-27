@@ -10,12 +10,12 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
-import { useLocation } from '@tanstack/react-router';
-import { BarsIcon } from '@patternfly/react-icons';
-import { Search } from './search';
-import { UserDropdown } from './user-dropdown';
+import { useLocation } from "@tanstack/react-router";
+import { BarsIcon } from "@patternfly/react-icons";
+import { Search } from "./search";
+import { UserDropdown } from "./user-dropdown";
 
 interface AppMastheadProps {
   showSidebarToggle?: boolean;
@@ -49,7 +49,7 @@ export function AppMasthead({
         <ToolbarGroup
           className="pf-v6-u-w-100 pf-v6-u-w-75-on-md pf-v6-u-px-xl-on-md"
           variant="filter-group"
-          align={{ default: 'alignCenter' }}
+          align={{ default: "alignCenter" }}
         >
           <ToolbarItem className="pf-v6-u-w-100">
             <Search />
@@ -68,11 +68,11 @@ export function AppMasthead({
   );
 
   const title =
-    location.pathname === '/search'
-      ? 'Search'
-      : location.pathname === '/account'
-        ? 'My Account'
-        : 'Product Recommendations';
+    location.pathname === "/search"
+      ? "Search"
+      : location.pathname === "/account"
+        ? "My Account"
+        : "Product Recommendations";
 
   return (
     <PFMasthead>

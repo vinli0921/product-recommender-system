@@ -9,10 +9,10 @@ import {
   DescriptionListDescription,
   Spinner,
   Alert,
-} from '@patternfly/react-core';
-import { Carousel } from './Carousel/Carousel';
-import { GalleryView } from './Gallery';
-import { useAuth } from '../contexts/AuthProvider';
+} from "@patternfly/react-core";
+import { Carousel } from "./Carousel/Carousel";
+import { GalleryView } from "./Gallery";
+import { useAuth } from "../contexts/AuthProvider";
 
 export function AccountPage() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -44,10 +44,10 @@ export function AccountPage() {
     <>
       {/* User Profile Section */}
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           My Account
         </Title>
-        <Card style={{ marginTop: '20px' }}>
+        <Card style={{ marginTop: "20px" }}>
           <CardBody>
             <Title headingLevel="h2" size="lg">
               Profile Information
@@ -55,19 +55,27 @@ export function AccountPage() {
             <DescriptionList isHorizontal>
               <DescriptionListGroup>
                 <DescriptionListTerm>Email</DescriptionListTerm>
-                <DescriptionListDescription>{user.email}</DescriptionListDescription>
+                <DescriptionListDescription>
+                  {user.email}
+                </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
                 <DescriptionListTerm>User ID</DescriptionListTerm>
-                <DescriptionListDescription>{user.user_id}</DescriptionListDescription>
+                <DescriptionListDescription>
+                  {user.user_id}
+                </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
                 <DescriptionListTerm>Age</DescriptionListTerm>
-                <DescriptionListDescription>{user.age}</DescriptionListDescription>
+                <DescriptionListDescription>
+                  {user.age}
+                </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
                 <DescriptionListTerm>Gender</DescriptionListTerm>
-                <DescriptionListDescription>{user.gender}</DescriptionListDescription>
+                <DescriptionListDescription>
+                  {user.gender}
+                </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
                 <DescriptionListTerm>Member Since</DescriptionListTerm>
@@ -78,7 +86,7 @@ export function AccountPage() {
               <DescriptionListGroup>
                 <DescriptionListTerm>Preferences</DescriptionListTerm>
                 <DescriptionListDescription>
-                  {user.preferences || 'No preferences set'}
+                  {user.preferences || "No preferences set"}
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
@@ -88,21 +96,21 @@ export function AccountPage() {
 
       {/* Product Recommendations Section */}
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
-          Product Recommendations for {user.email.split('@')[0]}
+        <Title headingLevel={"h2"} style={{ marginTop: "15px" }}>
+          Product Recommendations for {user.email.split("@")[0]}
         </Title>
       </PageSection>
       <Carousel products={productsRecommended} />
 
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h2"} style={{ marginTop: "15px" }}>
           Trending Products
         </Title>
         <GalleryView products={trendingProducts} />
       </PageSection>
 
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h2"} style={{ marginTop: "15px" }}>
           Highly Recommended
         </Title>
         <Carousel products={highlyRecProducts} />

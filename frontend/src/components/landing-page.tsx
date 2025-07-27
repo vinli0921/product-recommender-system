@@ -1,7 +1,7 @@
-import { PageSection, Title, Spinner, Alert } from '@patternfly/react-core';
-import { GalleryView } from './Gallery';
-import { usePersonalizedRecommendations } from '../hooks/useRecommendations';
-import { useAuth } from '../contexts/AuthProvider';
+import { PageSection, Title, Spinner, Alert } from "@patternfly/react-core";
+import { GalleryView } from "./Gallery";
+import { usePersonalizedRecommendations } from "../hooks/useRecommendations";
+import { useAuth } from "../contexts/AuthProvider";
 
 export function LandingPage() {
   const { isAuthenticated } = useAuth();
@@ -11,11 +11,12 @@ export function LandingPage() {
   if (!isAuthenticated) {
     return (
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel="h1" style={{ marginTop: '15px' }}>
+        <Title headingLevel="h1" style={{ marginTop: "15px" }}>
           Welcome to Product Recommendations
         </Title>
         <Alert variant="info" title="Authentication Required">
-          Please log in to see personalized product recommendations tailored just for you!
+          Please log in to see personalized product recommendations tailored
+          just for you!
         </Alert>
       </PageSection>
     );
@@ -33,8 +34,8 @@ export function LandingPage() {
     return (
       <PageSection>
         <Alert variant="danger" title="Error">
-          Sorry, we couldn't load your personalized recommendations right now. Please try again
-          later.
+          Sorry, we couldn't load your personalized recommendations right now.
+          Please try again later.
         </Alert>
       </PageSection>
     );
@@ -43,7 +44,7 @@ export function LandingPage() {
   return (
     <>
       <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h1'} style={{ marginTop: '15px' }}>
+        <Title headingLevel={"h1"} style={{ marginTop: "15px" }}>
           Recommended for You
         </Title>
       </PageSection>

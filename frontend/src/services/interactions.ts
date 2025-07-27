@@ -1,4 +1,4 @@
-import { apiRequest, ServiceLogger } from './api';
+import { apiRequest, ServiceLogger } from "./api";
 
 export interface InteractionRequest {
   item_id: string;
@@ -15,18 +15,26 @@ export interface InteractionResponse {
 }
 
 export const logInteraction = async (
-  interaction: InteractionRequest
+  interaction: InteractionRequest,
 ): Promise<InteractionResponse> => {
-  ServiceLogger.logServiceCall('logInteraction', { interaction });
-  return apiRequest<InteractionResponse>('/api/interactions', 'logInteraction', {
-    method: 'POST',
-    body: interaction,
-  });
+  ServiceLogger.logServiceCall("logInteraction", { interaction });
+  return apiRequest<InteractionResponse>(
+    "/api/interactions",
+    "logInteraction",
+    {
+      method: "POST",
+      body: interaction,
+    },
+  );
 };
 
 export const recordProductClick = async (productId: string): Promise<void> => {
-  ServiceLogger.logServiceCall('recordProductClick', { productId });
-  return apiRequest<void>(`/api/products/${productId}/interactions/click`, 'recordProductClick', {
-    method: 'POST',
-  });
+  ServiceLogger.logServiceCall("recordProductClick", { productId });
+  return apiRequest<void>(
+    `/api/products/${productId}/interactions/click`,
+    "recordProductClick",
+    {
+      method: "POST",
+    },
+  );
 };

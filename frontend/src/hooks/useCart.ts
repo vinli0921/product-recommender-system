@@ -1,9 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchCart, addToCart, updateCart, removeFromCart, editCart } from '../services/cart';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchCart,
+  addToCart,
+  updateCart,
+  removeFromCart,
+  editCart,
+} from "../services/cart";
 
 export const useCart = (userId: string) => {
   return useQuery({
-    queryKey: ['cart', userId],
+    queryKey: ["cart", userId],
     queryFn: () => fetchCart(userId),
     enabled: !!userId,
     staleTime: 30 * 1000, // Override: cart changes very frequently
@@ -16,7 +22,7 @@ export const useAddToCart = () => {
   return useMutation({
     mutationFn: addToCart,
     onSuccess: (_, cartItem) => {
-      queryClient.invalidateQueries({ queryKey: ['cart', cartItem.user_id] });
+      queryClient.invalidateQueries({ queryKey: ["cart", cartItem.user_id] });
     },
   });
 };
@@ -27,7 +33,7 @@ export const useUpdateCart = () => {
   return useMutation({
     mutationFn: updateCart,
     onSuccess: (_, cartItem) => {
-      queryClient.invalidateQueries({ queryKey: ['cart', cartItem.user_id] });
+      queryClient.invalidateQueries({ queryKey: ["cart", cartItem.user_id] });
     },
   });
 };
@@ -38,7 +44,7 @@ export const useRemoveFromCart = () => {
   return useMutation({
     mutationFn: removeFromCart,
     onSuccess: (_, cartItem) => {
-      queryClient.invalidateQueries({ queryKey: ['cart', cartItem.user_id] });
+      queryClient.invalidateQueries({ queryKey: ["cart", cartItem.user_id] });
     },
   });
 };
@@ -50,7 +56,7 @@ export const useEditCart = () => {
   return useMutation({
     mutationFn: editCart,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 };

@@ -1,4 +1,4 @@
-import { apiRequest, ServiceLogger } from './api';
+import { apiRequest, ServiceLogger } from "./api";
 
 export interface Feedback {
   userId: string;
@@ -9,9 +9,9 @@ export interface Feedback {
 }
 
 export const submitFeedback = async (feedback: Feedback): Promise<void> => {
-  ServiceLogger.logServiceCall('submitFeedback', { feedback });
-  return apiRequest<void>('/api/feedback', 'submitFeedback', {
-    method: 'POST',
+  ServiceLogger.logServiceCall("submitFeedback", { feedback });
+  return apiRequest<void>("/api/feedback", "submitFeedback", {
+    method: "POST",
     body: feedback,
   });
 };

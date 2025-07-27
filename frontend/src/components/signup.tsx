@@ -10,33 +10,33 @@ import {
   InputGroup,
   InputGroupItem,
   Alert,
-} from '@patternfly/react-core';
-import { Link } from '@tanstack/react-router';
-import { useForm } from '@tanstack/react-form';
-import { EyeIcon, EyeSlashIcon, PaperPlaneIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
-import { useSignup } from '../hooks/useAuth';
+} from "@patternfly/react-core";
+import { Link } from "@tanstack/react-router";
+import { useForm } from "@tanstack/react-form";
+import { EyeIcon, EyeSlashIcon, PaperPlaneIcon } from "@patternfly/react-icons";
+import { useState } from "react";
+import { useSignup } from "../hooks/useAuth";
 
 export const SimpleSignupPage: React.FunctionComponent = () => {
   // const navigate = useNavigate();
   const signupMutation = useSignup();
   const [passwordHidden, setPasswordHidden] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
-  const hidePasswordAriaLabel = 'Hide password';
-  const showPasswordAriaLabel = 'Show password';
+  const [errorMessage, setErrorMessage] = useState("");
+  const hidePasswordAriaLabel = "Hide password";
+  const showPasswordAriaLabel = "Show password";
 
   const form = useForm({
     // Set default values for your form fields
     defaultValues: {
-      email: '',
-      password: '',
-      age: '',
-      gender: '',
+      email: "",
+      password: "",
+      age: "",
+      gender: "",
     },
     // This function is called on successful submission
     onSubmit: async ({ value }) => {
       try {
-        setErrorMessage('');
+        setErrorMessage("");
         await signupMutation.mutateAsync({
           email: value.email,
           password: value.password,
@@ -45,7 +45,9 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
         });
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : 'Signup failed. Please try again.'
+          error instanceof Error
+            ? error.message
+            : "Signup failed. Please try again.",
         );
       }
     },
@@ -58,7 +60,11 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
   const signupForm = (
     <>
       {errorMessage && (
-        <Alert variant="danger" title="Signup Error" style={{ marginBottom: '1rem' }}>
+        <Alert
+          variant="danger"
+          title="Signup Error"
+          style={{ marginBottom: "1rem" }}
+        >
           {errorMessage}
         </Alert>
       )}
@@ -75,10 +81,10 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
           validators={{
             onChange: ({ value }) => {
               if (!value) {
-                return 'Email is required';
+                return "Email is required";
               }
               if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                return 'Please enter a valid email address';
+                return "Please enter a valid email address";
               }
               return undefined;
             },
@@ -95,14 +101,20 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
                 onChange={(_event, value) => field.handleChange(value)}
                 validated={
                   !field.state.meta.isTouched
-                    ? 'default'
+                    ? "default"
                     : field.state.meta.errors.length > 0
-                      ? 'error'
-                      : 'success'
+                      ? "error"
+                      : "success"
                 }
               />
               {field.state.meta.errors.length > 0 && (
-                <div style={{ color: '#c9190b', fontSize: '14px', marginTop: '4px' }}>
+                <div
+                  style={{
+                    color: "#c9190b",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                  }}
+                >
                   {field.state.meta.errors[0]}
                 </div>
               )}
@@ -114,44 +126,48 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
           validators={{
             onChange: ({ value }) => {
               if (!value) {
-                return 'Password is required';
+                return "Password is required";
               }
               if (!/^.{8,}$/.test(value)) {
-                return 'Password must be at least 8 characters or longer';
+                return "Password must be at least 8 characters or longer";
               }
               if (!/^(?=.*?[#?!@$%^&*-]).{8,}$/.test(value)) {
-                return 'Password must contain at least 1 special character';
+                return "Password must contain at least 1 special character";
               }
               if (!/^(?=.*?[A-Z]).{8,}$/.test(value)) {
-                return 'Password must have at least 1 uppercase letter';
+                return "Password must have at least 1 uppercase letter";
               }
               if (!/^(?=.*?[a-z]).{8,}$/.test(value)) {
-                return 'Password must have at least 1 lowercase letter';
+                return "Password must have at least 1 lowercase letter";
               }
               if (!/^(?=.*?[0-9]).{8,}$/.test(value)) {
-                return 'Password must have at least 1 numerical character';
+                return "Password must have at least 1 numerical character";
               }
               return undefined;
             },
           }}
         >
           {(field) => (
-            <FormGroup label="Password" isRequired fieldId="simple-form-password-02">
+            <FormGroup
+              label="Password"
+              isRequired
+              fieldId="simple-form-password-02"
+            >
               <InputGroup>
                 <InputGroupItem isFill>
                   <TextInput
                     isRequired
-                    type={passwordHidden ? 'password' : 'text'}
+                    type={passwordHidden ? "password" : "text"}
                     id="simple-form-password-02"
                     name={field.name}
                     value={field.state.value}
                     onChange={(_event, value) => field.handleChange(value)}
                     validated={
                       !field.state.meta.isTouched
-                        ? 'default'
+                        ? "default"
                         : field.state.meta.errors.length > 0
-                          ? 'error'
-                          : 'success'
+                          ? "error"
+                          : "success"
                     }
                   />
                 </InputGroupItem>
@@ -159,13 +175,23 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
                   <Button
                     variant="control"
                     onClick={() => setPasswordHidden(!passwordHidden)}
-                    aria-label={passwordHidden ? showPasswordAriaLabel : hidePasswordAriaLabel}
+                    aria-label={
+                      passwordHidden
+                        ? showPasswordAriaLabel
+                        : hidePasswordAriaLabel
+                    }
                     icon={passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
                   />
                 </InputGroupItem>
               </InputGroup>
               {field.state.meta.errors.length > 0 && (
-                <div style={{ color: '#c9190b', fontSize: '14px', marginTop: '4px' }}>
+                <div
+                  style={{
+                    color: "#c9190b",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                  }}
+                >
                   {field.state.meta.errors[0]}
                 </div>
               )}
@@ -175,7 +201,7 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
         <form.Field
           name="age"
           validators={{
-            onChange: ({ value }) => (!value ? 'Age is required' : undefined),
+            onChange: ({ value }) => (!value ? "Age is required" : undefined),
           }}
         >
           {(field) => (
@@ -194,7 +220,8 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
         <form.Field
           name="gender"
           validators={{
-            onChange: ({ value }) => (!value ? 'Gender is required' : undefined),
+            onChange: ({ value }) =>
+              !value ? "Gender is required" : undefined,
           }}
         >
           {(field) => (
@@ -209,31 +236,35 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
                 name={field.name}
                 id="radio-male"
                 value="Male"
-                isChecked={field.state.value === 'Male'}
-                onChange={() => field.handleChange('Male')}
+                isChecked={field.state.value === "Male"}
+                onChange={() => field.handleChange("Male")}
               />
               <Radio
                 label="Female"
                 name={field.name}
                 id="radio-female"
                 value="Female"
-                isChecked={field.state.value === 'Female'}
-                onChange={() => field.handleChange('Female')}
+                isChecked={field.state.value === "Female"}
+                onChange={() => field.handleChange("Female")}
               />
               <Radio
                 label="Other"
                 name={field.name}
                 id="radio-other"
                 value="Other"
-                isChecked={field.state.value === 'Other'}
-                onChange={() => field.handleChange('Other')}
+                isChecked={field.state.value === "Other"}
+                onChange={() => field.handleChange("Other")}
               />
             </FormGroup>
           )}
         </form.Field>
         <ActionGroup>
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine]}
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isPristine,
+            ]}
           >
             {([canSubmit, isSubmitting]) => (
               <Button
@@ -241,11 +272,13 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
                 variant="primary"
                 type="submit"
                 isLoading={isSubmitting || signupMutation.isPending}
-                isDisabled={isSubmitting || signupMutation.isPending || !canSubmit}
+                isDisabled={
+                  isSubmitting || signupMutation.isPending || !canSubmit
+                }
               >
                 {isSubmitting || signupMutation.isPending
-                  ? 'Creating Account...'
-                  : 'Create Account'}
+                  ? "Creating Account..."
+                  : "Create Account"}
               </Button>
             )}
           </form.Subscribe>
@@ -264,7 +297,10 @@ export const SimpleSignupPage: React.FunctionComponent = () => {
   );
 
   return (
-    <LoginPage loginTitle="Sign up for an account" signUpForAccountMessage={logIntoAccountMessage}>
+    <LoginPage
+      loginTitle="Sign up for an account"
+      signUpForAccountMessage={logIntoAccountMessage}
+    >
       {signupForm}
     </LoginPage>
   );

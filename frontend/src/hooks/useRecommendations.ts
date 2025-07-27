@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import {
   fetchExistingUserRecommendations,
   fetchNewUserRecommendations,
-} from '../services/recommendations';
-import { useAuth } from '../contexts/AuthProvider';
+} from "../services/recommendations";
+import { useAuth } from "../contexts/AuthProvider";
 
 /**
  * Smart recommendations hook that automatically chooses the right recommendation type
@@ -20,10 +20,12 @@ export const usePersonalizedRecommendations = () => {
   const hasInteractionHistory = false; // TODO: Implement history check
 
   return useQuery({
-    queryKey: ['recommendations', 'personalized', user?.user_id],
+    queryKey: ["recommendations", "personalized", user?.user_id],
     queryFn: () => {
       if (!user?.user_id) {
-        throw new Error('User authentication required for personalized recommendations');
+        throw new Error(
+          "User authentication required for personalized recommendations",
+        );
       }
 
       if (hasInteractionHistory) {
@@ -39,7 +41,7 @@ export const usePersonalizedRecommendations = () => {
 // Recommendations for users with existing interaction history
 export const useExistingUserRecommendations = (userId: string) => {
   return useQuery({
-    queryKey: ['recommendations', 'existing-user', userId],
+    queryKey: ["recommendations", "existing-user", userId],
     queryFn: () => fetchExistingUserRecommendations(userId),
     enabled: !!userId,
   });
@@ -48,7 +50,7 @@ export const useExistingUserRecommendations = (userId: string) => {
 // Recommendations for users without interaction history (cold start)
 export const useNewUserRecommendations = (numRecommendations: number = 10) => {
   return useQuery({
-    queryKey: ['recommendations', 'new-user', numRecommendations],
+    queryKey: ["recommendations", "new-user", numRecommendations],
     queryFn: () => fetchNewUserRecommendations(numRecommendations),
   });
 };

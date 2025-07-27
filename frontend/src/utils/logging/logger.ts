@@ -1,22 +1,22 @@
-import pino from 'pino';
+import pino from "pino";
 
 // Browser-compatible pino configuration with visible console output
 const logger = pino({
-  level: import.meta.env.PROD ? 'info' : 'debug',
+  level: import.meta.env.PROD ? "info" : "debug",
   browser: {
     asObject: true,
     write: {
       info: (obj: any) => {
-        console.info('🟢 [INFO]', obj);
+        console.info("🟢 [INFO]", obj);
       },
       warn: (obj: any) => {
-        console.warn('🟡 [WARN]', obj);
+        console.warn("🟡 [WARN]", obj);
       },
       error: (obj: any) => {
-        console.error('🔴 [ERROR]', obj);
+        console.error("🔴 [ERROR]", obj);
       },
       debug: (obj: any) => {
-        console.debug('🔵 [DEBUG]', obj);
+        console.debug("🔵 [DEBUG]", obj);
       },
     },
   },
@@ -48,31 +48,39 @@ export class ApiLogger {
     return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  static startRequest(operation: string, endpoint: string, params?: any): LogContext {
+  static startRequest(
+    operation: string,
+    endpoint: string,
+    params?: any,
+  ): LogContext {
     const requestId = this.generateRequestId();
     const startTime = performance.now();
 
     logger.info(
       {
-        phase: 'start',
+        phase: "start",
         operation,
         endpoint,
         requestId,
         params,
         userAgent: navigator.userAgent,
       },
-      `🚀 Starting ${operation}`
+      `🚀 Starting ${operation}`,
     );
 
     return { operation, endpoint, startTime, requestId };
   }
 
-  static logResponse(context: LogContext, response: Response, dataSize?: string | number) {
+  static logResponse(
+    context: LogContext,
+    response: Response,
+    dataSize?: string | number,
+  ) {
     const duration = performance.now() - context.startTime;
 
     logger.info(
       {
-        phase: 'success',
+        phase: "success",
         operation: context.operation,
         requestId: context.requestId,
         endpoint: context.endpoint,
@@ -82,7 +90,7 @@ export class ApiLogger {
         dataSize,
         headers: Object.fromEntries(response.headers.entries()),
       },
-      `✅ ${context.operation} completed in ${duration.toFixed(2)}ms`
+      `✅ ${context.operation} completed in ${duration.toFixed(2)}ms`,
     );
   }
 
@@ -91,7 +99,7 @@ export class ApiLogger {
 
     logger.error(
       {
-        phase: 'error',
+        phase: "error",
         operation: context.operation,
         requestId: context.requestId,
         endpoint: context.endpoint,
@@ -109,65 +117,65 @@ export class ApiLogger {
             }
           : null,
       },
-      `❌ ${context.operation} failed after ${duration.toFixed(2)}ms`
+      `❌ ${context.operation} failed after ${duration.toFixed(2)}ms`,
     );
   }
 
   static logWarning(context: LogContext, message: string, details?: any) {
     logger.warn(
       {
-        phase: 'warning',
+        phase: "warning",
         operation: context.operation,
         requestId: context.requestId,
         endpoint: context.endpoint,
         ...details,
       },
-      `⚠️ ${message}`
+      `⚠️ ${message}`,
     );
   }
 
   static logRequest(context: LogContext, options: RequestInit) {
     logger.debug(
       {
-        phase: 'request',
+        phase: "request",
         operation: context.operation,
         requestId: context.requestId,
         endpoint: context.endpoint,
-        method: options.method || 'GET',
+        method: options.method || "GET",
         headers: options.headers,
       },
-      `📤 Making ${options.method || 'GET'} request`
+      `📤 Making ${options.method || "GET"} request`,
     );
   }
 
   static logResponseReceived(context: LogContext, response: Response) {
     logger.debug(
       {
-        phase: 'response_received',
+        phase: "response_received",
         operation: context.operation,
         requestId: context.requestId,
         status: response.status,
         statusText: response.statusText,
       },
-      `📥 Received response: ${response.status} ${response.statusText}`
+      `📥 Received response: ${response.status} ${response.statusText}`,
     );
   }
 
   static logDataParsing(context: LogContext, data: any) {
     const dataInfo = Array.isArray(data)
-      ? { type: 'array', length: data.length }
-      : typeof data === 'object' && data !== null
-        ? { type: 'object', properties: Object.keys(data).length }
+      ? { type: "array", length: data.length }
+      : typeof data === "object" && data !== null
+        ? { type: "object", properties: Object.keys(data).length }
         : { type: typeof data };
 
     logger.debug(
       {
-        phase: 'data_parsed',
+        phase: "data_parsed",
         operation: context.operation,
         requestId: context.requestId,
         dataInfo,
       },
-      `📋 Parsed ${dataInfo.type} data`
+      `📋 Parsed ${dataInfo.type} data`,
     );
   }
 }
@@ -180,17 +188,21 @@ export class ServiceLogger {
         service: serviceName,
         params,
       },
-      `🎯 Service ${serviceName} called`
+      `🎯 Service ${serviceName} called`,
     );
   }
 
-  static logServiceWarning(serviceName: string, message: string, details?: any) {
+  static logServiceWarning(
+    serviceName: string,
+    message: string,
+    details?: any,
+  ) {
     logger.warn(
       {
         service: serviceName,
         ...details,
       },
-      `⚠️ ${serviceName}: ${message}`
+      `⚠️ ${serviceName}: ${message}`,
     );
   }
 
@@ -205,7 +217,7 @@ export class ServiceLogger {
         },
         ...details,
       },
-      `💥 ${serviceName} error: ${error.message}`
+      `💥 ${serviceName} error: ${error.message}`,
     );
   }
 }

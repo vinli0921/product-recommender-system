@@ -1,12 +1,12 @@
-import Slider, { type Settings } from 'react-slick';
-import { ProductCard } from '../product-card';
-import AngleLeftIcon from '@patternfly/react-icons/dist/esm/icons/angle-left-icon';
-import AngleRightIcon from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import './carousel.css';
-import { Button } from '@patternfly/react-core';
-import type { ProductData } from '../../types';
+import Slider, { type Settings } from "react-slick";
+import { ProductCard } from "../product-card";
+import AngleLeftIcon from "@patternfly/react-icons/dist/esm/icons/angle-left-icon";
+import AngleRightIcon from "@patternfly/react-icons/dist/esm/icons/angle-right-icon";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./carousel.css";
+import { Button } from "@patternfly/react-core";
+import type { ProductData } from "../../types";
 
 interface ArrowProps {
   onClick?: () => void;
@@ -16,7 +16,7 @@ export const Carousel = ({ products }: { products: ProductData[] }) => {
   function NextArrow(props: ArrowProps) {
     const { onClick } = props;
     return (
-      <div className={'slick-arrow slick-next'} onClick={onClick}>
+      <div className={"slick-arrow slick-next"} onClick={onClick}>
         <Button variant="plain" icon={<AngleRightIcon />}></Button>
       </div>
     );
@@ -25,7 +25,7 @@ export const Carousel = ({ products }: { products: ProductData[] }) => {
   function PrevArrow(props: ArrowProps) {
     const { onClick } = props;
     return (
-      <div className={'slick-arrow slick-prev'} onClick={onClick}>
+      <div className={"slick-arrow slick-prev"} onClick={onClick}>
         <Button variant="plain" icon={<AngleLeftIcon />}></Button>
       </div>
     );
