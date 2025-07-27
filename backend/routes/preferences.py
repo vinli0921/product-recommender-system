@@ -1,14 +1,15 @@
 # routes/preferences.py
+from fastapi import APIRouter, Depends, status
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from database.db import get_db
 from database.models_sql import User
-from fastapi import APIRouter, Depends, status
 from models import AuthResponse
 from models import User as UserResponse
-from pydantic import BaseModel
 from routes.auth import get_current_user
 from services.kafka_service import KafkaService
 from services.security import create_access_token
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/users", tags=["users"])
 

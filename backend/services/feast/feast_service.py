@@ -9,7 +9,6 @@ import requests
 import torch
 from feast import FeatureStore
 from minio import Minio
-from models import Product, User
 from PIL import Image as PILImage
 from recsysapp.models.data_util import data_preproccess
 from recsysapp.models.entity_tower import EntityTower
@@ -17,6 +16,8 @@ from recsysapp.service.clip_encoder import ClipEncoder
 from recsysapp.service.dataset_provider import LocalDatasetProvider
 from recsysapp.service.search_by_image import SearchByImageService
 from recsysapp.service.search_by_text import SearchService
+
+from models import Product, User
 
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"

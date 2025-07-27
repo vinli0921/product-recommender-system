@@ -30,19 +30,3 @@ repos:
         name: Helm Lint
         entry: bash -c 'cd helm/product-recommender-system/ && helm lint . || false'
         language: system
-
-  # Install pre-push hook for commit limits (blocks >5 commits)
-  - repo: local
-    hooks:
-      - id: commit-limit-check
-        name: Commit Limit Check
-        entry: >
-          bash -c 'git fetch origin main &&
-          COMMITS_AHEAD=$(git rev-list --count upstream/main..HEAD) &&
-          if [ "$COMMITS_AHEAD" -gt 5 ]; then
-            echo "PR contains too many commits: $COMMITS_AHEAD commits ahead of upstream/main" && exit 1;
-          else
-            echo "PR has $COMMITS_AHEAD commits ahead of upstream/main, which is within the limit" && exit 0;
-          fi'
-        language: system
-        pass_filenames: false

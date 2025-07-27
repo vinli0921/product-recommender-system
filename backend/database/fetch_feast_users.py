@@ -6,11 +6,12 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
+from sqlalchemy.future import select
+
 from database.db import get_db
 from database.models_sql import User
 from services.feast.feast_service import FeastService
 from services.security import hash_password
-from sqlalchemy.future import select
 
 
 # Utility: generate random email and password

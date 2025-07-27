@@ -214,7 +214,6 @@ Once installed, the hooks will automatically run when you commit changes. If any
 
 **What's automatically checked:**
 - **Python**: Code style (flake8), formatting (black), import sorting (isort)
-- **JavaScript/TypeScript**: Linting (ESLint) and formatting (Prettier)
 - **YAML**: Syntax validation and formatting
 - **Helm**: Chart structure and template validation
 - **General**: Trailing whitespace, missing newlines, large files
@@ -233,22 +232,76 @@ pip install flake8 black isort
 flake8 .          # Check code style and errors
 black .           # Auto-format Python code
 isort .           # Sort and organize imports
-
-# Frontend tools (run in ui/ or frontend/ directory)
-npm run format    # Format with Prettier
-npm run lint      # Check with ESLint
 ```
 
-**Benefits:**
-- Consistent code style across the team
-- Catch bugs and issues before they reach main branch
-- Automatic code formatting saves time
-- Enforced standards improve code readability
+### Git Commit Best Practices
 
-**Commit limits:**
-- **Local pushes**: BLOCKS pushes with >5 commits (install with: `pre-commit run install-pre-push-hook --hook-stage manual`)
-- **Pull requests**: GitHub Actions shows warnings for >5 commits
-- Enforces clean git history by requiring commit squashing
+To maintain a clean and readable project history, follow these git commit guidelines:
+
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, no logic changes)
+- `refactor`: Code refactoring (no new features or bug fixes)
+- `test`: Adding or updating tests
+- `chore`: Build process, dependencies, or tooling changes
+
+**Examples:**
+```bash
+git commit -m "feat: add user authentication system"
+git commit -m "fix: resolve database connection timeout issue"
+git commit -m "docs: update installation instructions"
+git commit -m "style: format code with black and prettier"
+```
+
+**Best Practices:**
+- **Keep commits focused**: One logical change per commit
+- **Write clear and short messages**: Describe shortly what what added/changed
+- **Use present tense**: "Add feature" not "Added feature"
+
+**Amending commits in PRs:**
+If you need to make small changes to your last commit (e.g., fix typos, address review comments):
+```bash
+# Make your changes, then stage them
+git add -u
+
+# Amend the last commit without changing the message
+git commit --amend --no-edit
+
+# Force push safely (only affects your branch)
+git push --force-with-lease
+```
+
+Only use `--force-with-lease` on your own feature branches, never on shared branches like `main`.
+
+**Resolving merge conflicts:**
+⚠️ **Take extra care when resolving merge conflicts** - incorrect resolution can break functionality or lose important changes.
+
+```bash
+# When you encounter a conflict during merge/rebase:
+git status                    # See which files have conflicts
+
+# Open conflicted files and look for conflict markers:
+# <<<<<<< HEAD
+# Your changes
+# =======
+# Their changes
+# >>>>>>> branch-name
+
+# After resolving conflicts in each file:
+git add <resolved-file>       # Stage resolved files
+git status                    # Verify all conflicts are resolved
+git commit                    # Complete the merge (or git rebase --continue)
+```
+
+**Conflict resolution best practices:**
+- **Understand both sides**: Read and understand what each conflicting change does
+- **Test after resolving**: Run tests to ensure functionality isn't broken
+- **Ask for help**: If unsure, consult the original author of conflicting code
+- **Review carefully**: Double-check that you haven't accidentally deleted important code
+- **Use merge tools**: Use IDE merge tools.
 
 ## Run Tests
 

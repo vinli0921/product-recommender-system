@@ -2,11 +2,14 @@ import random
 import string
 from datetime import date
 
-from database.db import get_db
-from database.models_sql import User
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from database.db import get_db
+from database.models_sql import User
 from models import AuthResponse, LoginRequest, SignUpRequest
 from models import User as UserResponse
 from services.kafka_service import KafkaService  # Kafka send
@@ -17,8 +20,6 @@ from services.security import (
     hash_password,
     verify_password,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 # OAuth2 scheme for Bearer token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

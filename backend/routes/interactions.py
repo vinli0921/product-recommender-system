@@ -1,12 +1,13 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from database.db import get_db
-from database.models_sql import User
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
-from routes.auth import get_current_user
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.db import get_db
+from database.models_sql import User
+from routes.auth import get_current_user
 
 router = APIRouter(prefix="/interactions", tags=["interactions"])
 

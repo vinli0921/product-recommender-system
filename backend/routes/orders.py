@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter
+
 from models import CheckoutRequest, InteractionType, Order
 from services.kafka_service import KafkaService
 

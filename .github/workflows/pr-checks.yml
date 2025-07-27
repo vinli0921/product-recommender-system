@@ -5,28 +5,6 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  check-commit-count:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the PR branch
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history required for accurate commit comparison
-
-      - name: Get number of commits in the PR
-        id: count
-        run: |
-          COMMITS=$(git rev-list --count origin/${{ github.base_ref }}..HEAD)
-          echo "Found $COMMITS commits in this PR"
-          echo "commits=$COMMITS" >> $GITHUB_OUTPUT
-
-      - name: Fail if commit count is too high
-        if: steps.count.outputs.commits > 5
-        run: |
-          echo "❌ PR contains more than 5 commits."
-          echo "Please squash your commits before merging."
-          exit 1
-
   code-quality-check:
     runs-on: ubuntu-latest
     name: Code Quality Check
@@ -47,7 +25,7 @@ jobs:
       - name: Run flake8 (warning only)
         run: |
           echo "🔍 Running flake8 checks..."
-          cd backend && flake8 --extend-ignore=E203,W503 . || {
+          cd backend && flake8 --max-line-length=99 --extend-ignore=E203,W503 . || {
             echo "::warning::Flake8 found code style issues"
             echo "Run 'cd backend && flake8 .' locally to see details"
             exit 1

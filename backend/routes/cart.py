@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter
+
 from models import CartItem, InteractionType
 from services.kafka_service import KafkaService
 

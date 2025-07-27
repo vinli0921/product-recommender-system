@@ -2,8 +2,9 @@ from io import BytesIO
 from typing import List
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from models import Product
 from PIL import Image, UnidentifiedImageError
+
+from models import Product
 from routes.auth import get_current_user  # to resolve JWT user
 from services.feast.feast_service import FeastService
 from services.kafka_service import KafkaService

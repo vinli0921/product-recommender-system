@@ -1,6 +1,7 @@
 import pytest
-from database.db import get_db
 from httpx import ASGITransport, AsyncClient
+
+from database.db import get_db
 from main import app
 
 

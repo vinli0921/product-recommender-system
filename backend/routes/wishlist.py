@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter
+
 from models import Product, WishlistItem
 
 router = APIRouter()

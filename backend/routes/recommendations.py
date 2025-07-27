@@ -1,10 +1,11 @@
 from typing import List
 
-from database.models_sql import User
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
+from database.models_sql import User
 from models import Product
 from models import User as UserSchema  # Pydantic User
-from pydantic import BaseModel
 from routes.auth import get_current_user  # to resolve JWT user
 from services.feast.feast_service import FeastService
 

@@ -1,12 +1,14 @@
+import sys
+
+import httpx
 import numpy as np
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import Response
 from fastapi.exceptions import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
-import httpx
-import sys
+
 from routes import auth, health, preferences, products, recommendations
 
 # from routes import test
