@@ -1,4 +1,4 @@
-import { apiRequest, ServiceLogger } from "./api";
+import { apiRequest, ServiceLogger } from './api';
 
 export interface OrderItem {
   product_id: string;
@@ -21,14 +21,14 @@ export interface Order {
 }
 
 export const checkout = async (request: CheckoutRequest): Promise<Order> => {
-  ServiceLogger.logServiceCall("checkout", { request });
-  return apiRequest<Order>("/api/checkout", "checkout", {
-    method: "POST",
+  ServiceLogger.logServiceCall('checkout', { request });
+  return apiRequest<Order>('/api/checkout', 'checkout', {
+    method: 'POST',
     body: request,
   });
 };
 
 export const fetchOrderHistory = async (userId: string): Promise<Order[]> => {
-  ServiceLogger.logServiceCall("fetchOrderHistory", { userId });
-  return apiRequest<Order[]>(`/api/orders/${userId}`, "fetchOrderHistory");
+  ServiceLogger.logServiceCall('fetchOrderHistory', { userId });
+  return apiRequest<Order[]>(`/api/orders/${userId}`, 'fetchOrderHistory');
 };

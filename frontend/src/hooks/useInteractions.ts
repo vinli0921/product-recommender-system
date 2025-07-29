@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { logInteraction, recordProductClick } from "../services/interactions";
-import type { InteractionRequest } from "../services/interactions";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { logInteraction, recordProductClick } from '../services/interactions';
+import type { InteractionRequest } from '../services/interactions';
 
 export const useLogInteraction = () => {
   const queryClient = useQueryClient();
@@ -10,12 +10,12 @@ export const useLogInteraction = () => {
       logInteraction(interaction),
     onSuccess: (_, interaction) => {
       // Interactions might affect recommendations
-      queryClient.invalidateQueries({ queryKey: ["recommendations"] });
+      queryClient.invalidateQueries({ queryKey: ['recommendations'] });
 
       // If it's a rating interaction, update product cache
       if (interaction.rating) {
         queryClient.invalidateQueries({
-          queryKey: ["products", interaction.item_id],
+          queryKey: ['products', interaction.item_id],
         });
       }
     },

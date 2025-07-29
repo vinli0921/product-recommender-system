@@ -1,15 +1,15 @@
 // Composite hooks that combine multiple operations for better DX
-import { useAuth } from "../contexts/AuthProvider";
-import { useProduct, useProductSearch } from "./useProducts";
-import { usePersonalizedRecommendations } from "./useRecommendations";
-import type { ProductData } from "../types";
-import { useCart, useAddToCart } from "./useCart";
+import { useAuth } from '../contexts/AuthProvider';
+import { useProduct, useProductSearch } from './useProducts';
+import { usePersonalizedRecommendations } from './useRecommendations';
+import type { ProductData } from '../types';
+import { useCart, useAddToCart } from './useCart';
 import {
   useWishlist,
   useAddToWishlist,
   useRemoveFromWishlist,
-} from "./useWishlist";
-import { useRecordProductClick } from "./useInteractions";
+} from './useWishlist';
+import { useRecordProductClick } from './useInteractions';
 
 /**
  * Hook that provides all product-related actions for a specific product
@@ -18,7 +18,7 @@ import { useRecordProductClick } from "./useInteractions";
  */
 export const useProductActions = (productId: string) => {
   const { user } = useAuth();
-  const userId = user?.user_id || "";
+  const userId = user?.user_id || '';
 
   // Data hooks
   const productQuery = useProduct(productId);
@@ -33,15 +33,14 @@ export const useProductActions = (productId: string) => {
 
   // Derived state
   const isInCart =
-    cartQuery.data?.some((item) => item.product_id === productId) ?? false;
+    cartQuery.data?.some(item => item.product_id === productId) ?? false;
   const isInWishlist =
-    wishlistQuery.data?.some(
-      (product) => product.id.toString() === productId,
-    ) ?? false;
+    wishlistQuery.data?.some(product => product.id.toString() === productId) ??
+    false;
 
   // Composite actions
   const addToCart = (quantity: number = 1) => {
-    if (!userId) throw new Error("User must be authenticated to add to cart");
+    if (!userId) throw new Error('User must be authenticated to add to cart');
 
     return addToCartMutation.mutate({
       user_id: userId,
@@ -52,7 +51,7 @@ export const useProductActions = (productId: string) => {
 
   const toggleWishlist = () => {
     if (!userId)
-      throw new Error("User must be authenticated to modify wishlist");
+      throw new Error('User must be authenticated to modify wishlist');
 
     if (isInWishlist) {
       return removeFromWishlistMutation.mutate({ userId, productId });
@@ -102,7 +101,7 @@ export const useProductActions = (productId: string) => {
  */
 export const useProductCardActions = (productId: string) => {
   const { user } = useAuth();
-  const userId = user?.user_id || "";
+  const userId = user?.user_id || '';
 
   // Only fetch user's cart and wishlist data (shared across all cards)
   const cartQuery = useCart(userId);
@@ -116,15 +115,14 @@ export const useProductCardActions = (productId: string) => {
 
   // Derived state for this specific product
   const isInCart =
-    cartQuery.data?.some((item) => item.product_id === productId) ?? false;
+    cartQuery.data?.some(item => item.product_id === productId) ?? false;
   const isInWishlist =
-    wishlistQuery.data?.some(
-      (product) => product.id.toString() === productId,
-    ) ?? false;
+    wishlistQuery.data?.some(product => product.id.toString() === productId) ??
+    false;
 
   // Lightweight actions (no product data fetching)
   const addToCart = (quantity: number = 1) => {
-    if (!userId) throw new Error("User must be authenticated to add to cart");
+    if (!userId) throw new Error('User must be authenticated to add to cart');
 
     return addToCartMutation.mutate({
       user_id: userId,
@@ -135,7 +133,7 @@ export const useProductCardActions = (productId: string) => {
 
   const toggleWishlist = () => {
     if (!userId)
-      throw new Error("User must be authenticated to modify wishlist");
+      throw new Error('User must be authenticated to modify wishlist');
 
     if (isInWishlist) {
       return removeFromWishlistMutation.mutate({ userId, productId });
@@ -180,7 +178,7 @@ export const useProductCardActions = (productId: string) => {
  */
 export const useRecommendationsWithActions = () => {
   const { user } = useAuth();
-  const userId = user?.user_id || "";
+  const userId = user?.user_id || '';
 
   // Get personalized recommendations
   const recommendationsQuery = usePersonalizedRecommendations();
@@ -198,10 +196,10 @@ export const useRecommendationsWithActions = () => {
   // Factory function to create actions for any product in the list
   const createProductActions = (productId: string) => {
     const isInCart =
-      cartQuery.data?.some((item) => item.product_id === productId) ?? false;
+      cartQuery.data?.some(item => item.product_id === productId) ?? false;
     const isInWishlist =
       wishlistQuery.data?.some(
-        (product) => product.id.toString() === productId,
+        product => product.id.toString() === productId
       ) ?? false;
 
     return {
@@ -210,7 +208,7 @@ export const useRecommendationsWithActions = () => {
       isAuthenticated: !!userId,
       addToCart: (quantity: number = 1) => {
         if (!userId)
-          throw new Error("User must be authenticated to add to cart");
+          throw new Error('User must be authenticated to add to cart');
         return addToCartMutation.mutate({
           user_id: userId,
           product_id: productId,
@@ -219,7 +217,7 @@ export const useRecommendationsWithActions = () => {
       },
       toggleWishlist: () => {
         if (!userId)
-          throw new Error("User must be authenticated to modify wishlist");
+          throw new Error('User must be authenticated to modify wishlist');
         if (isInWishlist) {
           return removeFromWishlistMutation.mutate({ userId, productId });
         } else {
@@ -261,10 +259,10 @@ export const useRecommendationsWithActions = () => {
  */
 export const useSearchWithActions = (
   query: string,
-  enabled: boolean = true,
+  enabled: boolean = true
 ) => {
   const { user } = useAuth();
-  const userId = user?.user_id || "";
+  const userId = user?.user_id || '';
 
   // Get the search results
   const searchQuery = useProductSearch(query, enabled);
@@ -282,10 +280,10 @@ export const useSearchWithActions = (
   // Factory function to create actions for any product in the list
   const createProductActions = (productId: string) => {
     const isInCart =
-      cartQuery.data?.some((item) => item.product_id === productId) ?? false;
+      cartQuery.data?.some(item => item.product_id === productId) ?? false;
     const isInWishlist =
       wishlistQuery.data?.some(
-        (product) => product.id.toString() === productId,
+        product => product.id.toString() === productId
       ) ?? false;
 
     return {
@@ -294,7 +292,7 @@ export const useSearchWithActions = (
       isAuthenticated: !!userId,
       addToCart: (quantity: number = 1) => {
         if (!userId)
-          throw new Error("User must be authenticated to add to cart");
+          throw new Error('User must be authenticated to add to cart');
         return addToCartMutation.mutate({
           user_id: userId,
           product_id: productId,
@@ -303,7 +301,7 @@ export const useSearchWithActions = (
       },
       toggleWishlist: () => {
         if (!userId)
-          throw new Error("User must be authenticated to modify wishlist");
+          throw new Error('User must be authenticated to modify wishlist');
         if (isInWishlist) {
           return removeFromWishlistMutation.mutate({ userId, productId });
         } else {

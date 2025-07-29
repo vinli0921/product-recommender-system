@@ -2,27 +2,27 @@ import {
   ApiLogger,
   ServiceLogger,
   type ApiRequestOptions,
-} from "../utils/logging/logger";
+} from '../utils/logging/logger';
 
 // Enhanced API fetch utility using the new logger
 export async function apiRequest<T>(
   endpoint: string,
   operation: string,
-  options: ApiRequestOptions = {},
+  options: ApiRequestOptions = {}
 ): Promise<T> {
   const context = ApiLogger.startRequest(operation, endpoint, options);
 
   try {
-    const { method = "GET", body, headers } = options;
+    const { method = 'GET', body, headers } = options;
     const requestOptions: RequestInit = {
       method,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...headers,
       },
     };
 
-    if (body && method !== "GET") {
+    if (body && method !== 'GET') {
       requestOptions.body = JSON.stringify(body);
     }
 
@@ -31,22 +31,22 @@ export async function apiRequest<T>(
     ApiLogger.logResponseReceived(context, response);
 
     if (!response.ok) {
-      let errorDetails = "";
+      let errorDetails = '';
       try {
         errorDetails = await response.text();
       } catch (e) {
-        errorDetails = "Could not read error response";
+        errorDetails = 'Could not read error response';
       }
 
       ApiLogger.logError(
         context,
         new Error(
-          `HTTP ${response.status}: ${response.statusText}. ${errorDetails}`,
+          `HTTP ${response.status}: ${response.statusText}. ${errorDetails}`
         ),
-        response,
+        response
       );
       throw new Error(
-        `API request failed: ${response.status} ${response.statusText}. ${errorDetails}`,
+        `API request failed: ${response.status} ${response.statusText}. ${errorDetails}`
       );
     }
 
@@ -54,10 +54,10 @@ export async function apiRequest<T>(
     ApiLogger.logDataParsing(context, data);
 
     // Calculate response size for logging
-    let dataSize: string | number = "unknown";
+    let dataSize: string | number = 'unknown';
     if (Array.isArray(data)) {
       dataSize = `${data.length} items`;
-    } else if (typeof data === "object" && data !== null) {
+    } else if (typeof data === 'object' && data !== null) {
       dataSize = `${Object.keys(data as object).length} properties`;
     }
 
