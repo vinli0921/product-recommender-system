@@ -18,6 +18,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install Python dependencies
         run: |
           pip install flake8 black isort
@@ -46,5 +51,13 @@ jobs:
           cd backend && isort --check-only --diff . || {
             echo "::warning::Import sorting issues found"
             echo "Run 'cd backend && isort .' locally to fix imports"
+            exit 1
+          }
+      - name: Check Prettier formatting (frontend)
+        run: |
+          echo "Checking Prettier formatting in frontend..."
+          cd frontend && npx prettier --check . || {
+            echo "::error::Prettier formatting issues found in frontend."
+            echo "Run 'cd frontend && npx prettier --write .' locally to fix formatting."
             exit 1
           }
