@@ -1,9 +1,9 @@
-import { Page, PageSection } from "@patternfly/react-core";
-import { createFileRoute } from "@tanstack/react-router";
-import { PublicMasthead } from "../components/public-masthead";
-import { SimpleLoginPage } from "../components/login";
+import { Page, PageSection } from '@patternfly/react-core';
+import { createFileRoute } from '@tanstack/react-router';
+import { PublicMasthead } from '../components/public-masthead';
+import { SimpleLoginPage } from '../components/login';
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute('/login')({
   component: Login,
 });
 

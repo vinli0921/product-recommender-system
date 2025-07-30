@@ -1,17 +1,17 @@
-import type { ProductData } from "../types";
-import { apiRequest, ServiceLogger } from "./api";
+import type { ProductData } from '../types';
+import { apiRequest, ServiceLogger } from './api';
 
 /**
  * Fetch personalized recommendations for users with existing interaction history
  * These recommendations use the user's past behavior to suggest relevant products
  */
 export const fetchExistingUserRecommendations = async (
-  userId: string,
+  userId: string
 ): Promise<ProductData[]> => {
-  ServiceLogger.logServiceCall("fetchExistingUserRecommendations", { userId });
+  ServiceLogger.logServiceCall('fetchExistingUserRecommendations', { userId });
   return apiRequest<ProductData[]>(
     `/api/recommendations/${userId}`,
-    "fetchExistingUserRecommendations",
+    'fetchExistingUserRecommendations'
   );
 };
 
@@ -20,17 +20,17 @@ export const fetchExistingUserRecommendations = async (
  * These recommendations are based on general popularity or category preferences
  */
 export const fetchNewUserRecommendations = async (
-  numRecommendations: number = 10,
+  numRecommendations: number = 10
 ): Promise<ProductData[]> => {
-  ServiceLogger.logServiceCall("fetchNewUserRecommendations", {
+  ServiceLogger.logServiceCall('fetchNewUserRecommendations', {
     numRecommendations,
   });
   return apiRequest<ProductData[]>(
-    "/api/recommendations",
-    "fetchNewUserRecommendations",
+    '/api/recommendations',
+    'fetchNewUserRecommendations',
     {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({ num_recommendations: numRecommendations }),
-    },
+    }
   );
 };
