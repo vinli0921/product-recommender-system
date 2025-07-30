@@ -162,8 +162,8 @@ tolerations: []
 
 affinity: {}
 
-pipelineJobImage: quay.io/rh-ai-kickstart/rec-sys-workflow:latest
-applicationImage: quay.io/rh-ai-kickstart/rec-sys-app:latest
+pipelineJobImage: quay.io/rh-ai-kickstart/rec-sys-workflow:v1.0.6
+applicationImage: quay.io/rh-ai-kickstart/rec-sys-app:v1.0.4
 # Note the backend uses rec-sys-app as library.
 backendImage: quay.io/hacohen/product-recommender:1.0.0 # TODO: change to quay.io/rh-ai-kickstart/...
 
