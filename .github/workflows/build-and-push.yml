@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: product-recommender-backend
+          - name: product-recommender-frontend-backend
             context: .
             image-name: product-recommender-frontend-backend
     defaults:
