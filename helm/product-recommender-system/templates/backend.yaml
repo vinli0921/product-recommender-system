@@ -227,3 +227,28 @@ spec:
               path: tls.crt
         {{- end }}
       {{- end }}
+---
+{{- if .Values.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "product-recommender-system.fullname" . }}-frontend
+  labels:
+    {{- include "product-recommender-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+spec:
+  to:
+    kind: Service
+    name: {{ include "product-recommender-system.fullname" . }}-backend
+    weight: 100
+  port:
+    targetPort: http
+  {{- if .Values.route.tls.enabled }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  {{- end }}
+  {{- if .Values.route.host }}
+  host: {{ .Values.route.host }}
+  {{- end }}
+{{- end }}

@@ -126,6 +126,13 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+# OpenShift Route configuration
+route:
+  enabled: true
+  # host: your-app.apps.your-cluster.com  # Optional: specify custom hostname
+  tls:
+    enabled: true  # Enable HTTPS
+
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
