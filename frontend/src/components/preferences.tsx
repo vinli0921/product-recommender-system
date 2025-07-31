@@ -2,7 +2,6 @@ import {
   ActionGroup,
   Button,
   Card,
-  CardHeader,
   CardTitle,
   Flex,
   FlexItem,
@@ -66,7 +65,10 @@ export function PreferencePage() {
       {isLoading ? (
         <Skeleton style={{ height: 200, width: '100%' }} />
       ) : isError ? (
-        <div>Error fetching preferences</div>
+        <div>
+          Error fetching preferences:{' '}
+          {errorMessage ? errorMessage : 'Unknown error'}
+        </div>
       ) : (
         <>
           <Gallery hasGutter style={{ width: '100%' }}>
