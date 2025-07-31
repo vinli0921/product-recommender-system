@@ -153,7 +153,7 @@ export const useOptimisticWishlist = () => {
       queryClient.setQueryData(
         ['wishlist', userId],
         (old: ProductData[] = []) =>
-          old.filter(product => product.id.toString() !== productId)
+          old.filter(product => product.item_id.toString() !== productId)
       );
 
       return { previousWishlist };
