@@ -10,17 +10,10 @@ import {
   Spinner,
   Alert,
 } from '@patternfly/react-core';
-import { Carousel } from './Carousel/Carousel';
-import { GalleryView } from './Gallery';
 import { useAuth } from '../contexts/AuthProvider';
 
 export function AccountPage() {
   const { user, isLoading, isAuthenticated } = useAuth();
-
-  // Placeholder empty arrays for demo
-  const productsRecommended: any[] = [];
-  const highlyRecProducts: any[] = [];
-  const trendingProducts: any[] = [];
 
   if (isLoading) {
     return (
@@ -92,28 +85,6 @@ export function AccountPage() {
             </DescriptionList>
           </CardBody>
         </Card>
-      </PageSection>
-
-      {/* Product Recommendations Section */}
-      <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
-          Product Recommendations for {user.email.split('@')[0]}
-        </Title>
-      </PageSection>
-      <Carousel products={productsRecommended} />
-
-      <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
-          Trending Products
-        </Title>
-        <GalleryView products={trendingProducts} />
-      </PageSection>
-
-      <PageSection hasBodyWrapper={false}>
-        <Title headingLevel={'h2'} style={{ marginTop: '15px' }}>
-          Highly Recommended
-        </Title>
-        <Carousel products={highlyRecProducts} />
       </PageSection>
     </>
   );
