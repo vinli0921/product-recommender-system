@@ -133,7 +133,13 @@ class KafkaService:
             "rating": int(rating) if rating is not None else None,
             "quantity": int(quantity) if quantity is not None else None,
             "review_title": review_title if review_title is not None else "",
+<<<<<<< HEAD
             "review_content": review_content if review_content is not None else "",
+=======
+            "review_content": review_content
+            if review_content is not None
+            else "",
+>>>>>>> aa629f2bc3c11f3a996d1c8a6184fada69c95489
             "interaction_id": f"{user_id}-{item_id}-\
                 {datetime.now(timezone.utc).timestamp()}",
             # example unique ID
@@ -142,7 +148,9 @@ class KafkaService:
         self.producer.send("interactions", message)
         self.producer.flush()
 
-    def send_new_user(self, user_id: Union[int, str], user_name: str, preferences: str) -> None:
+    def send_new_user(
+        self, user_id: Union[int, str], user_name: str, preferences: str
+    ) -> None:
         """Send a new user event to Kafka"""
         schema = self._build_new_user_schema()
         user_data = {
