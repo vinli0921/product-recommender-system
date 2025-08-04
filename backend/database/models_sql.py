@@ -7,7 +7,9 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    user_id: Mapped[str] = mapped_column(String(27), primary_key=True, index=True)
+    user_id: Mapped[str] = mapped_column(
+        String(27), primary_key=True, index=True
+    )
     email: Mapped[str] = mapped_column(String, unique=True, index=True)
     password: Mapped[str] = mapped_column(
         String, nullable=True
@@ -18,12 +20,14 @@ class User(Base):
     signup_date: Mapped[Date] = mapped_column(Date, nullable=True)
     preferences: Mapped[str] = mapped_column(String, nullable=True)
 
-class CartItem(Base): 
+
+class CartItem(Base):
     __tablename__ = "cart_items"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[str] = mapped_column(String(27), index=True) 
+    user_id: Mapped[str] = mapped_column(String(27), index=True)
     product_id: Mapped[str] = mapped_column(String, index=True)
     quantity: Mapped[int] = mapped_column(Integer)
+
 
 """
 class Product(Base):
