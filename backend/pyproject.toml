@@ -27,7 +27,6 @@ dependencies = [
     "recsysapp",
     "httpx>=0.28.1",
     "flake8>=7.3.0",
-    "black>=25.1.0",
 ]
 
 [project.optional-dependencies]

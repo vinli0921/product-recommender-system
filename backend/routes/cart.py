@@ -32,7 +32,9 @@ async def get_cart(user_id: str, db: AsyncSession = Depends(get_db)):
 
 @router.post("/cart", status_code=204)
 async def add_to_cart(item: CartItem, db: AsyncSession = Depends(get_db)):
-    KafkaService().send_interaction(item.user_id, item.product_id, InteractionType.CART.value)
+    KafkaService().send_interaction(
+        item.user_id, item.product_id, InteractionType.CART.value
+    )
 
     # Check if item already exists in cart
     stmt = select(CartItemDB).where(
