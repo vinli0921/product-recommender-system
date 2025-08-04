@@ -134,7 +134,8 @@ class KafkaService:
             "quantity": int(quantity) if quantity is not None else None,
             "review_title": review_title if review_title is not None else "",
             "review_content": review_content if review_content is not None else "",
-            "interaction_id": f"{user_id}-{item_id}-{datetime.now(timezone.utc).timestamp()}",
+            "interaction_id": f"{user_id}-{item_id}-\
+                {datetime.now(timezone.utc).timestamp()}",
             # example unique ID
         }
         message = {"schema": schema, "payload": interaction}
