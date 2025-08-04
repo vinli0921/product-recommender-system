@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: flake8-warn
         name: Flake8
-        entry: bash -c 'cd backend && flake8 --extend-ignore=E203,W503 . || false'
+        entry: bash -c 'cd backend && flake8 --extend-ignore=E203,W503 --exclude=.venv . || false'
         language: system
         files: .*\.py$
         pass_filenames: false
