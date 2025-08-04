@@ -9,7 +9,7 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from routes import auth, health, preferences, products, recommendations
+from routes import auth, health, preferences, products, recommendations, cart
 
 # from routes import test
 
@@ -54,7 +54,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 # app.include_router(interactions.router)
 app.include_router(recommendations.router)
-# app.include_router(cart.router)
+app.include_router(cart.router)
 # app.include_router(orders.router)
 # app.include_router(wishlist.router)
 # app.include_router(feedback.router)

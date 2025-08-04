@@ -18,6 +18,12 @@ class User(Base):
     signup_date: Mapped[Date] = mapped_column(Date, nullable=True)
     preferences: Mapped[str] = mapped_column(String, nullable=True)
 
+class CartItem(Base): 
+    __tablename__ = "cart_items"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[str] = mapped_column(String(27), index=True) 
+    product_id: Mapped[str] = mapped_column(String, index=True)
+    quantity: Mapped[int] = mapped_column(Integer)
 
 """
 class Product(Base):
@@ -42,13 +48,6 @@ class Feedback(Base):
     product_id: Mapped[int] = mapped_column(ForeignKey("products.item_id"))
     rating: Mapped[float] = mapped_column(Float)
     comment: Mapped[str] = mapped_column(String, nullable=True)
-
-class CartItem(Base):
-    __tablename__ = "cart_items"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.item_id"))
-    quantity: Mapped[int] = mapped_column(Integer)
 
 class Order(Base):
     __tablename__ = "orders"
