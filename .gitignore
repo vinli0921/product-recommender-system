@@ -175,6 +175,9 @@ cython_debug/
 .pypirc
 *.pyc
 
+#Test files
+*pytest*
+
 # Node.js dependencies
 node_modules/
 npm-debug.log*

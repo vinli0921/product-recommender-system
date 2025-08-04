@@ -1,0 +1,105 @@
+---
+test_name: Search for products
+
+stages:
+  - name: Test Signup a user
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/signup"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}_search@test.com"
+        password: "mypass"
+        age: 25
+        gender: "Male"
+    response:
+      status_code: 201
+
+  - name: Test Login with same user
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/login"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}_search@test.com"
+        password: "mypass"
+    response:
+      status_code: 200
+      save:
+        json:
+          token: "token"
+
+  - name: Test get product by id
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/products/B041073264"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        item_id: "B041073264"
+        product_name: "CrystalClear Max"
+        category: !anystr
+        about_product: "Self-healing screen protector with easy applicator."
+        img_link: !anystr
+        discount_percentage: !anyfloat
+        discounted_price: !anyfloat
+        actual_price: !anyfloat
+        product_link: !anystr
+        rating_count: !anyint
+        rating: !anyfloat
+
+  - name: Test click on product
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/products/B041073264/interactions/click"
+      method: POST
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 204
+
+  - name: Test Search for products by text
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/products/search?query=smartphone"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tests_helpers:validate_product_list
+        extra_kwargs:
+          expected_length: 5
+          required_fields: ["item_id", "product_name", "category", "about_product","img_link", "discount_percentage", "discounted_price", "actual_price", "product_link", "rating_count", "rating"]
+
+  - name: Test Search for products by text for k=3
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/products/search?query=smartphone&k=3"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tests_helpers:validate_product_list
+        extra_kwargs:
+          expected_length: 3
+          required_fields: ["item_id", "product_name", "category", "about_product","img_link", "discount_percentage", "discounted_price", "actual_price", "product_link", "rating_count", "rating"]
+
+  - name: Test Search for products by image link
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/products/search/image_link?image_link=https://m.media-amazon.com/images/I/61yH2X4re6L._AC_UY218_.jpg 1x, https://m.media-amazon.com/images/I/61yH2X4re6L._AC_UY327_FMwebp_QL65_.jpg 1.5x, https://m.media-amazon.com/images/I/61yH2X4re6L._AC_UY436_FMwebp_QL65_.jpg 2x, https://m.media-amazon.com/images/I/61yH2X4re6L._AC_UY545_FMwebp_QL65_.jpg 2.5x, https://m.media-amazon.com/images/I/61yH2X4re6L._AC_UY654_FMwebp_QL65_.jpg"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tests_helpers:validate_product_list
+        extra_kwargs:
+          expected_length: 5
+          required_fields: ["item_id", "product_name", "category", "about_product","img_link", "discount_percentage", "discounted_price", "actual_price", "product_link", "rating_count", "rating"]

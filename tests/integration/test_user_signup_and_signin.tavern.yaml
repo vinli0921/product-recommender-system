@@ -1,0 +1,80 @@
+---
+test_name: Signup a user and login
+
+stages:
+  - name: Test Signup a user
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/signup"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}@test.com"
+        password: "mypass"
+        age: 25
+        gender: "Male"
+    response:
+      status_code: 201
+      headers:
+        content-type: application/json
+      json:
+        user:
+          user_id: !anystr
+          email: "test{tavern.env_vars.TEST_TIMESTAMP}@test.com"
+          age: 25
+          gender: "Male"
+          signup_date: !anystr
+          preferences: ""
+          views: []
+        token: !anystr
+      save:
+        json:
+          user_id: "user.user_id"
+          signup_date: "user.signup_date"
+
+  - name: Test Login with same user
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/login"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}@test.com"
+        password: "mypass"
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        user:
+          user_id: "{user_id}"
+          email: "test{tavern.env_vars.TEST_TIMESTAMP}@test.com"
+          age: 25
+          gender: "Male"
+          signup_date: "{signup_date}"
+          preferences: ""
+          views: []
+        token: !anystr
+      save:
+        json:
+          token: "token"
+
+  - name: Test Set Preferences
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/users/preferences"
+      method: POST
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        preferences: "Home&Kitchen,HomeTheater,TV&Video"
+    response:
+      status_code: 200
+      headers:
+        content-type: application/json
+      json:
+        user:
+          user_id: "{user_id}"
+          email: "test{tavern.env_vars.TEST_TIMESTAMP}@test.com"
+          age: 25
+          gender: "Male"
+          signup_date: "{signup_date}"
+          preferences: "Home&Kitchen,HomeTheater,TV&Video"
+          views: []
+        token: !anystr

@@ -1,0 +1,47 @@
+---
+test_name: Frontend Health Check
+
+stages:
+  - name: Test Frontend Health Live
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}"
+      method: GET
+    response:
+      status_code: 200
+
+---
+# health check for backend is done via frontend
+test_name: Backend Health Live Check
+
+stages:
+  - name: Test Backend Health Live
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/health/live"
+      method: GET
+    response:
+      status_code: 200
+      json:
+        status: "alive"
+
+---
+test_name: Backend Health Ready Check
+
+stages:
+  - name: Test Backend Health Ready
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/health/ready"
+      method: GET
+    response:
+      status_code: 200
+      json:
+        status: "ready"
+
+---
+test_name: Feast Health Check
+stages:
+  - name: Test Feast Health Ready
+    request:
+      url: "{tavern.env_vars.TEST_FEAST_URL}"
+      method: GET
+    response:
+      status_code: 200
