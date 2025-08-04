@@ -8,7 +8,7 @@ import { CartDropdown } from './cart-dropdown'; // ← Add this import
 export const CartIcon = () => {
   const { user } = useAuth();
   const userId = user?.user_id || '';
-  
+
   // Cart data and dropdown state
   const { data: cartItems } = useCart(userId);
   const cartCount = cartItems?.length || 0;
@@ -28,13 +28,13 @@ export const CartIcon = () => {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <Button
-        variant="plain"
+        variant='plain'
         aria-label={`Shopping cart with ${cartCount} items`}
         onClick={handleCartClick} // ← Updated click handler
       >
         <ShoppingCartIcon />
       </Button>
-      
+
       {/* Cart count badge */}
       {cartCount > 0 && (
         <Badge
@@ -51,7 +51,7 @@ export const CartIcon = () => {
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '12px',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
           }}
         >
           {cartCount > 99 ? '99+' : cartCount}
@@ -59,10 +59,7 @@ export const CartIcon = () => {
       )}
 
       {/* Cart dropdown - ADD THIS */}
-      <CartDropdown 
-        isOpen={isDropdownOpen} 
-        onClose={handleCloseDropdown} 
-      />
+      <CartDropdown isOpen={isDropdownOpen} onClose={handleCloseDropdown} />
     </div>
   );
 };
