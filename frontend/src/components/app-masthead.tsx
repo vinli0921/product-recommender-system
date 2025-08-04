@@ -11,6 +11,7 @@ import {
 import { Link } from '@tanstack/react-router';
 import { Search } from './search';
 import { UserDropdown } from './user-dropdown';
+import { CartIcon } from './cart-icon';
 
 export function AppMasthead() {
   const toolbar = (
@@ -36,6 +37,9 @@ export function AppMasthead() {
           variant='action-group'
           className='pf-v6-u-display-none pf-v6-u-display-block-on-md'
         >
+          <ToolbarItem>
+            <CartIcon />
+          </ToolbarItem>
           <ToolbarItem>
             <UserDropdown />
           </ToolbarItem>
