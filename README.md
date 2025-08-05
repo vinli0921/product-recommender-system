@@ -20,11 +20,19 @@ To find products in the application you can do a:
 * Search items by text (semantic search).
 * Search items by Image (find similar items in the store).
 
-
-## See it in action
-
-*This section is optional but recommended*
-<!-- TODO do it at the end show UI gif of the usage -->
+## Related Repositories
+* [rec-sys-app](https://github.com/RHEcosystemAppEng/rec-sys-app/tree/main)
+  1. Main project repository for data scientists/ engineers.
+  2. Contains data-generation flow & train-workflow reserach notebooks
+  3. Containes Feast feature store.
+* [rec-sys-workflow](https://github.com/RHEcosystemAppEng/rec-sys-workflow)
+  1. This repo containes the training workflow for the recommendation system.
+  2. It loads data from the feast feature store.
+  3. Trains the 2-tower model.
+  4. Generates reccomedations.
+* Current repo
+  1. Deploys the app end-to-end with including the data generation and training pipeline using helm.
+  2. Has a frontend and backend functionality.
 
 ## Architecture diagrams
 Components of Recommender System
