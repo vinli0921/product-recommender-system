@@ -9,6 +9,23 @@ repos:
         files: .*\.py$
         pass_filenames: false
 
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: bash -c 'cd backend && isort . || false'
+        language: system
+        files: .*\.py$
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: bash -c 'cd backend && black . || false'
+        language: system
+        files: .*\.py$
+
   # Basic file checks (these can still block for critical issues)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 'v5.0.0'
