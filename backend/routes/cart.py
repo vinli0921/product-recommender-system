@@ -1,8 +1,8 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
 
 from database.db import get_db
 from database.models_sql import CartItem as CartItemDB
@@ -32,9 +32,7 @@ async def get_cart(user_id: str, db: AsyncSession = Depends(get_db)):
 
 @router.post("/cart", status_code=204)
 async def add_to_cart(item: CartItem, db: AsyncSession = Depends(get_db)):
-    KafkaService().send_interaction(
-        item.user_id, item.product_id, InteractionType.CART.value
-    )
+    KafkaService().send_interaction(item.user_id, item.product_id, InteractionType.CART.value)
 
     # Check if item already exists in cart
     stmt = select(CartItemDB).where(
