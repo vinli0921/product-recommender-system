@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: flake8-warn
         name: Flake8
-        entry: bash -c 'cd backend && flake8 --extend-ignore=E203,W503 --exclude=.venv . || false'
+        entry: bash -c 'cd backend && flake8 --extend-ignore=E203,W503 --max-line-length=99 --exclude=.venv . || false'
         language: system
         files: .*\.py$
         pass_filenames: false
@@ -13,7 +13,7 @@ repos:
     hooks:
       - id: isort
         name: isort
-        entry: bash -c 'cd backend && isort . || false'
+        entry: bash -c 'cd backend && isort . --skip=.venv || false'
         language: system
         files: .*\.py$
         pass_filenames: false
@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: bash -c 'cd backend && black . || false'
+        entry: bash -c 'cd backend && black . --exclude=.venv || false'
         language: system
         files: .*\.py$
 
