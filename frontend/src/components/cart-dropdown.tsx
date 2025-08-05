@@ -3,7 +3,7 @@ import { TrashIcon } from '@patternfly/react-icons';
 import { useAuth } from '../contexts/AuthProvider';
 import { useCart, useRemoveFromCart, useUpdateCart } from '../hooks/useCart';
 import { useProduct } from '../hooks/useProducts';
-
+import { useState, useEffect } from 'react';
 interface CartDropdownProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,14 +20,6 @@ const hash = (str: string): number => {
   return Math.abs(hash);
 };
 
-// Calculate total cart value
-const calculateCartTotal = (cartItems: any[]): number => {
-  return cartItems.reduce((total, item) => {
-    const itemPrice = (hash(item.product_id) % 40) + 10; // $10-50 based on product ID
-    return total + itemPrice * (item.quantity || 1);
-  }, 0);
-};
-
 // Helper component to render a single cart item with product details
 const CartItemRow = ({
   item,
@@ -37,6 +29,7 @@ const CartItemRow = ({
   onRemoveItem,
   isRemoving,
   isUpdating,
+  onPriceCalculated,
 }: any) => {
   const { data: productData, isLoading: isProductLoading } = useProduct(
     item.product_id
@@ -45,7 +38,17 @@ const CartItemRow = ({
 
   // Use product name if available, fallback to product ID
   const displayName = productData?.product_name || `Product ${item.product_id}`;
-  const itemPrice = (hash(item.product_id) % 40) + 10; // Keep existing price logic
+
+  // Use real product price, fallback to hash-based price if product data not loaded
+  const itemPrice =
+    productData?.actual_price ?? (hash(item.product_id) % 40) + 10;
+
+  // Report the calculated price back to parent for total calculation
+  useEffect(() => {
+    if (productData?.actual_price && onPriceCalculated) {
+      onPriceCalculated(item.product_id, productData.actual_price, quantity);
+    }
+  }, [productData?.actual_price, quantity, item.product_id, onPriceCalculated]);
 
   return (
     <div
@@ -179,6 +182,29 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
   const removeFromCartMutation = useRemoveFromCart();
   const updateCartMutation = useUpdateCart();
 
+  // Track real prices for total calculation
+  const [itemPrices, setItemPrices] = useState<
+    Record<string, { price: number; quantity: number }>
+  >({});
+
+  const handlePriceCalculated = (
+    productId: string,
+    price: number,
+    quantity: number
+  ) => {
+    setItemPrices(prev => ({
+      ...prev,
+      [productId]: { price, quantity },
+    }));
+  };
+
+  // Calculate total using real prices
+  const calculateRealCartTotal = (): number => {
+    return Object.values(itemPrices).reduce((total, { price, quantity }) => {
+      return total + price * quantity;
+    }, 0);
+  };
+
   if (!isOpen) return null;
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
@@ -282,7 +308,7 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
             </div>
           ) : (
             <>
-              {/* Cart Items - Replace the mapping with the new component */}
+              {/* Cart Items */}
               <div style={{ marginBottom: '16px' }}>
                 {cartItems?.map((item, index) => {
                   const isRemoving =
@@ -302,6 +328,7 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
                       cartItemsLength={cartItems.length}
                       onQuantityChange={handleQuantityChange}
                       onRemoveItem={handleRemoveItem}
+                      onPriceCalculated={handlePriceCalculated}
                       isRemoving={isRemoving}
                       isUpdating={isUpdating}
                     />
@@ -309,7 +336,7 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
                 })}
               </div>
 
-              {/* Cart Total */}
+              {/* Cart Total - Use real prices */}
               <div
                 style={{
                   padding: '12px 0',
@@ -325,7 +352,7 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
                   </FlexItem>
                   <FlexItem>
                     <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                      ${calculateCartTotal(cartItems || []).toFixed(2)}
+                      ${calculateRealCartTotal().toFixed(2)}
                     </span>
                   </FlexItem>
                 </Flex>
