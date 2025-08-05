@@ -1,0 +1,271 @@
+---
+test_name: Test Cart Functionality Happy Path
+
+stages:
+  - name: Signup a user
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/signup"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}_cart@test.com"
+        password: "mypass"
+        age: 55
+        gender: "Female"
+    response:
+      status_code: 201
+      headers:
+        content-type: application/json
+      save:
+        json:
+          user_id: "user.user_id"
+
+  - name: Login and get token
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/login"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}_cart@test.com"
+        password: "mypass"
+    response:
+      status_code: 200
+      save:
+        json:
+          token: "token"
+
+  - name: Add to cart
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: POST
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "1"
+        quantity: 1
+    response:
+      status_code: 204
+
+  - name: Get cart and verify item is added
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        - user_id: "{user_id}"
+          product_id: "1"
+          quantity: 1
+
+  - name: Update cart with same product
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: POST
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "1"
+        quantity: 2
+    response:
+      status_code: 204
+
+  - name: Get cart and verify item quantity is updated
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        - user_id: "{user_id}"
+          product_id: "1"
+          quantity: 3
+
+  - name: Update cart PUT
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: PUT
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "1"
+        quantity: 2
+    response:
+      status_code: 204
+
+  - name: Get cart and verify item quantity is updated
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        - user_id: "{user_id}"
+          product_id: "1"
+          quantity: 2
+
+  - name: Add a different product to cart
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: POST
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "2"
+        quantity: 1
+    response:
+      status_code: 204
+
+  - name: Get cart and verify item is added
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        - user_id: "{user_id}"
+          product_id: "1"
+          quantity: 2
+        - user_id: "{user_id}"
+          product_id: "2"
+          quantity: 1
+
+  - name: Delete item from cart
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "2"
+        quantity: 1
+    response:
+      status_code: 204
+
+  - name: Get cart and verify item is deleted
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        - user_id: "{user_id}"
+          product_id: "1"
+          quantity: 2
+
+---
+test_name: Test Cart Functionality Edge Cases
+
+markers:
+  - skip:
+      reason: "This test have to be fixed"
+
+stages:
+
+  - name: Signup a user
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/signup"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}_cart_edge@test.com"
+        password: "mypass"
+        age: 18
+        gender: "Male"
+    response:
+      status_code: 201
+      headers:
+        content-type: application/json
+      save:
+        json:
+          user_id: "user.user_id"
+
+  - name: Login and get token
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/auth/login"
+      method: POST
+      json:
+        email: "test{tavern.env_vars.TEST_TIMESTAMP}_cart_edge@test.com"
+        password: "mypass"
+    response:
+      status_code: 200
+      save:
+        json:
+          token: "token"
+
+  - name: Add to cart 5 items
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: POST
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "1"
+        quantity: 5
+    response:
+      status_code: 204
+
+  - name: Delete 1 items from cart
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "1"
+        quantity: 1
+    response:
+      status_code: 204
+
+  - name: Get cart and verify quantity changed
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+    response:
+      status_code: 200
+      json:
+        - user_id: "{user_id}"
+          product_id: "1"
+          quantity: 4
+
+  - name: Delete non existing item from cart
+    request:
+      url: "{tavern.env_vars.TEST_FRONTEND_URL}/cart"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {token}"
+        Content-Type: "application/json"
+      json:
+        user_id: "{user_id}"
+        product_id: "100"
+        quantity: 1
+    response:
+      status_code: 404

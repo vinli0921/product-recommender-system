@@ -72,7 +72,18 @@ stages:
         function: tests_helpers:validate_product_list
         extra_kwargs:
           expected_length: 5
-          required_fields: ["item_id", "product_name", "category", "about_product","img_link", "discount_percentage", "discounted_price", "actual_price", "product_link", "rating_count", "rating"]
+          required_fields:
+            - item_id
+            - product_name
+            - category
+            - about_product
+            - img_link
+            - discount_percentage
+            - discounted_price
+            - actual_price
+            - product_link
+            - rating_count
+            - rating
 
   - name: Test Search for products by text for k=3
     request:
@@ -87,7 +98,18 @@ stages:
         function: tests_helpers:validate_product_list
         extra_kwargs:
           expected_length: 3
-          required_fields: ["item_id", "product_name", "category", "about_product","img_link", "discount_percentage", "discounted_price", "actual_price", "product_link", "rating_count", "rating"]
+          required_fields:
+            - item_id
+            - product_name
+            - category
+            - about_product
+            - img_link
+            - discount_percentage
+            - discounted_price
+            - actual_price
+            - product_link
+            - rating_count
+            - rating
 
   - name: Test Search for products by image link
     request:
@@ -102,4 +124,15 @@ stages:
         function: tests_helpers:validate_product_list
         extra_kwargs:
           expected_length: 5
-          required_fields: ["item_id", "product_name", "category", "about_product","img_link", "discount_percentage", "discounted_price", "actual_price", "product_link", "rating_count", "rating"]
+          required_fields:
+            - item_id
+            - product_name
+            - category
+            - about_product
+            - img_link
+            - discount_percentage
+            - discounted_price
+            - actual_price
+            - product_link
+            - rating_count
+            - rating
