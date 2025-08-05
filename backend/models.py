@@ -41,7 +41,7 @@ class User(BaseModel):
 
 class Feedback(BaseModel):
     userId: str
-    productId: int
+    productId: str
     rating: float
     title: Optional[str] = ""
     comment: Optional[str] = ""
@@ -66,7 +66,7 @@ class AuthResponse(BaseModel):
 
 class CartItem(BaseModel):
     user_id: str
-    product_id: int
+    product_id: str
     quantity: int
 
 
@@ -88,4 +88,4 @@ class Order(BaseModel):
 
 class WishlistItem(BaseModel):
     user_id: str
-    product_id: int
+    product_id: str

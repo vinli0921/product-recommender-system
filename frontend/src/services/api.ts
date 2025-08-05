@@ -53,6 +53,11 @@ export async function apiRequest<T>(
         `API request failed: ${response.status} ${response.statusText}. ${errorDetails}`
       );
     }
+    // Handle 204 No Content - no JSON to parse
+    if (response.status === 204) {
+      ApiLogger.logResponse(context, response, 'no content');
+      return null as T;
+    }
 
     const data = (await response.json()) as T;
     ApiLogger.logDataParsing(context, data);
