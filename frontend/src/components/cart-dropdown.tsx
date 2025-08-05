@@ -2,6 +2,7 @@ import { Card, CardBody, Button, Flex, FlexItem } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useAuth } from '../contexts/AuthProvider';
 import { useCart, useRemoveFromCart, useUpdateCart } from '../hooks/useCart';
+import { useProduct } from '../hooks/useProducts';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -27,12 +28,156 @@ const calculateCartTotal = (cartItems: any[]): number => {
   }, 0);
 };
 
+// Helper component to render a single cart item with product details
+const CartItemRow = ({
+  item,
+  index,
+  cartItemsLength,
+  onQuantityChange,
+  onRemoveItem,
+  isRemoving,
+  isUpdating,
+}: any) => {
+  const { data: productData, isLoading: isProductLoading } = useProduct(
+    item.product_id
+  );
+  const quantity = item.quantity || 1;
+
+  // Use product name if available, fallback to product ID
+  const displayName = productData?.product_name || `Product ${item.product_id}`;
+  const itemPrice = (hash(item.product_id) % 40) + 10; // Keep existing price logic
+
+  return (
+    <div
+      key={`${item.product_id}-${index}`}
+      style={{
+        padding: '12px 0',
+        borderBottom:
+          index < cartItemsLength - 1 ? '1px solid #f0f0f0' : 'none',
+        opacity: isRemoving || isUpdating ? 0.5 : 1,
+        transition: 'opacity 0.2s',
+      }}
+    >
+      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+        <FlexItem flex={{ default: 'flex_1' }}>
+          <div style={{ fontSize: '14px', fontWeight: '500' }}>
+            {isProductLoading ? 'Loading...' : displayName}
+          </div>
+
+          {/* Quantity Controls */}
+          <div
+            style={{
+              fontSize: '12px',
+              color: '#6a6e73',
+              marginTop: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <span>Price: ${itemPrice.toFixed(2)}</span>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                border: '1px solid #d2d2d2',
+                borderRadius: '4px',
+                padding: '2px',
+              }}
+            >
+              {/* Minus Button */}
+              <Button
+                variant='plain'
+                aria-label='Decrease quantity'
+                onClick={() => onQuantityChange(item.product_id, quantity - 1)}
+                isDisabled={isUpdating || isRemoving || quantity <= 1}
+                style={{
+                  padding: '2px 6px',
+                  minHeight: 'auto',
+                  fontSize: '14px',
+                  lineHeight: 1,
+                }}
+              >
+                −
+              </Button>
+
+              {/* Quantity Display */}
+              <span
+                style={{
+                  minWidth: '20px',
+                  textAlign: 'center',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                }}
+              >
+                {quantity}
+              </span>
+
+              {/* Plus Button */}
+              <Button
+                variant='plain'
+                aria-label='Increase quantity'
+                onClick={() => onQuantityChange(item.product_id, quantity + 1)}
+                isDisabled={isUpdating || isRemoving}
+                style={{
+                  padding: '2px 6px',
+                  minHeight: 'auto',
+                  fontSize: '14px',
+                  lineHeight: 1,
+                }}
+              >
+                +
+              </Button>
+            </div>
+          </div>
+        </FlexItem>
+
+        <FlexItem>
+          <div
+            style={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              marginRight: '8px',
+            }}
+          >
+            ${(itemPrice * quantity).toFixed(2)}
+          </div>
+        </FlexItem>
+
+        <FlexItem>
+          {/* Remove button */}
+          <Button
+            variant='plain'
+            aria-label={`Remove ${displayName} from cart`}
+            onClick={() => onRemoveItem(item.product_id)}
+            isLoading={isRemoving}
+            isDisabled={isRemoving || isUpdating}
+            style={{
+              padding: '4px',
+              minHeight: 'auto',
+              color: '#c9190b',
+            }}
+          >
+            {isRemoving ? (
+              <span style={{ fontSize: '12px' }}>...</span>
+            ) : (
+              <TrashIcon size={12} />
+            )}
+          </Button>
+        </FlexItem>
+      </Flex>
+    </div>
+  );
+};
+
 export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
   const { user } = useAuth();
   const userId = user?.user_id || '';
   const { data: cartItems, isLoading } = useCart(userId);
   const removeFromCartMutation = useRemoveFromCart();
-  const updateCartMutation = useUpdateCart(); // ← Add this import at the top
+  const updateCartMutation = useUpdateCart();
 
   if (!isOpen) return null;
 
@@ -137,10 +282,9 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
             </div>
           ) : (
             <>
-              {/* Cart Items */}
+              {/* Cart Items - Replace the mapping with the new component */}
               <div style={{ marginBottom: '16px' }}>
                 {cartItems?.map((item, index) => {
-                  const quantity = item.quantity || 1; // ← Define once, use everywhere
                   const isRemoving =
                     removeFromCartMutation.isPending &&
                     removeFromCartMutation.variables?.product_id ===
@@ -151,148 +295,16 @@ export const CartDropdown = ({ isOpen, onClose }: CartDropdownProps) => {
                       item.product_id;
 
                   return (
-                    <div
+                    <CartItemRow
                       key={`${item.product_id}-${index}`}
-                      style={{
-                        padding: '12px 0',
-                        borderBottom:
-                          index < cartItems.length - 1
-                            ? '1px solid #f0f0f0'
-                            : 'none',
-                        opacity: isRemoving || isUpdating ? 0.5 : 1,
-                        transition: 'opacity 0.2s',
-                      }}
-                    >
-                      <Flex alignItems={{ default: 'alignItemsCenter' }}>
-                        <FlexItem flex={{ default: 'flex_1' }}>
-                          <div style={{ fontSize: '14px', fontWeight: '500' }}>
-                            Product {item.product_id}
-                          </div>
-
-                          {/* Quantity Controls */}
-                          <div
-                            style={{
-                              fontSize: '12px',
-                              color: '#6a6e73',
-                              marginTop: '4px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                            }}
-                          >
-                            <span>
-                              Price: $
-                              {((hash(item.product_id) % 40) + 10).toFixed(2)}
-                            </span>
-
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                border: '1px solid #d2d2d2',
-                                borderRadius: '4px',
-                                padding: '2px',
-                              }}
-                            >
-                              {/* Minus Button */}
-                              <Button
-                                variant='plain'
-                                aria-label='Decrease quantity'
-                                onClick={() =>
-                                  handleQuantityChange(
-                                    item.product_id,
-                                    quantity - 1
-                                  )
-                                }
-                                isDisabled={
-                                  isUpdating || isRemoving || quantity <= 1
-                                }
-                                style={{
-                                  padding: '2px 6px',
-                                  minHeight: 'auto',
-                                  fontSize: '14px',
-                                  lineHeight: 1,
-                                }}
-                              >
-                                −
-                              </Button>
-
-                              {/* Quantity Display */}
-                              <span
-                                style={{
-                                  minWidth: '20px',
-                                  textAlign: 'center',
-                                  fontSize: '12px',
-                                  fontWeight: '500',
-                                }}
-                              >
-                                {quantity}
-                              </span>
-
-                              {/* Plus Button */}
-                              <Button
-                                variant='plain'
-                                aria-label='Increase quantity'
-                                onClick={() =>
-                                  handleQuantityChange(
-                                    item.product_id,
-                                    quantity + 1
-                                  )
-                                }
-                                isDisabled={isUpdating || isRemoving}
-                                style={{
-                                  padding: '2px 6px',
-                                  minHeight: 'auto',
-                                  fontSize: '14px',
-                                  lineHeight: 1,
-                                }}
-                              >
-                                +
-                              </Button>
-                            </div>
-                          </div>
-                        </FlexItem>
-
-                        <FlexItem>
-                          <div
-                            style={{
-                              fontSize: '14px',
-                              fontWeight: 'bold',
-                              marginRight: '8px',
-                            }}
-                          >
-                            $
-                            {(
-                              ((hash(item.product_id) % 40) + 10) *
-                              quantity
-                            ).toFixed(2)}
-                          </div>
-                        </FlexItem>
-
-                        <FlexItem>
-                          {/* Remove button - now removes entire item */}
-                          <Button
-                            variant='plain'
-                            aria-label={`Remove ${item.product_id} from cart`}
-                            onClick={() => handleRemoveItem(item.product_id)}
-                            isLoading={isRemoving}
-                            isDisabled={isRemoving || isUpdating}
-                            style={{
-                              padding: '4px',
-                              minHeight: 'auto',
-                              color: '#c9190b',
-                            }}
-                          >
-                            {isRemoving ? (
-                              <span style={{ fontSize: '12px' }}>...</span>
-                            ) : (
-                              <TrashIcon size={12} />
-                            )}
-                          </Button>
-                        </FlexItem>
-                      </Flex>
-                    </div>
+                      item={item}
+                      index={index}
+                      cartItemsLength={cartItems.length}
+                      onQuantityChange={handleQuantityChange}
+                      onRemoveItem={handleRemoveItem}
+                      isRemoving={isRemoving}
+                      isUpdating={isUpdating}
+                    />
                   );
                 })}
               </div>
