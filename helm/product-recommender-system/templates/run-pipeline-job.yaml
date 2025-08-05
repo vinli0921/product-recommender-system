@@ -1,17 +1,24 @@
+{{- $jobName := "kfp-run-job" }}
+{{- $existingJob := (lookup "batch/v1" "Job" .Release.Namespace $jobName) }}
+{{- if not $existingJob }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: kfp-run-job
+  name: {{ $jobName }}
   labels:
     pipelines.kubeflow.org/v2_component: 'true'
 spec:
   template:
     {{- include "product-recommender-system.pipeline-job-template" . | nindent 4 }}
+{{- end }}
 ---
+{{- $cornJobName := "kfp-run-job" }}
+{{- $existingCornJob := (lookup "batch/v1" "CronJob" .Release.Namespace $cornJobName) }}
+{{- if not $existingJob }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: kfp-run-cronjob
+  name: {{ $cornJobName }}
   labels:
     pipelines.kubeflow.org/v2_component: 'true'
 spec:
@@ -21,3 +28,4 @@ spec:
     spec:
       template:
         {{- include "product-recommender-system.pipeline-job-template" . | nindent 8 }}
+{{- end }}

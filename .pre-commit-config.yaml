@@ -32,13 +32,13 @@ repos:
     hooks:
       - id: check-yaml  # Validates YAML syntax
         args: ['--allow-multiple-documents']
-        exclude: ^helm/.*\.yaml$  # Exclude Helm templates - they're checked separately
+        exclude: ^helm/.*\.yaml$|^tests/integration/.*\.tavern\.yaml$  # Exclude Helm templates and Tavern test files
       - id: check-json  # Validates JSON syntax
         exclude: ^frontend/.*$  # Exclude frontend - handled by ESLint
       - id: trailing-whitespace
-        exclude: ^(frontend/.*\.json$|frontend/.*\.js$|frontend/.*\.jsx$|frontend/.*\.ts$|frontend/.*\.tsx$)  # Exclude frontend files - different conventions
+        exclude: .*\.svg$  # Exclude all SVG files
       - id: end-of-file-fixer
-        exclude: ^frontend/.*$  # Exclude frontend directories - React doesn't use end-of-file newlines
+        exclude: .*\.svg$  # Exclude all SVG files
 
   # Warning-only Helm linting (won't block commits)
   - repo: local
