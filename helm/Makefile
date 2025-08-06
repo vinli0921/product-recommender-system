@@ -59,7 +59,7 @@ install: namespace depend minio-install pipeline-server-install create-dynamic-s
 .PHONY: minio-install
 minio-install:
 	@echo "Installing Minio helm chart and default bucket for recommender pipeline..."
-	helm -n $(NAMESPACE) upgrade --install minio $(MINIO_CHART) \
+	@helm -n $(NAMESPACE) upgrade --install minio $(MINIO_CHART) \
 		--set minio.userId=$(minio.userId) \
 		--set minio.password=$(minio.password) \
 		--timeout 5m
