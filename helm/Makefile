@@ -18,6 +18,7 @@ MINIO_CHART := minio
 PIPELINE_SERVER_CHART := pipeline-server
 # Do we need this??
 TOLERATIONS_TEMPLATE=[{"key":"$(1)","effect":"NoSchedule","operator":"Exists"}]
+MINIMUM_OC_VERSION = "4.17.0"
 
 # Helm argument helpers
 helm_pgvector_args = \
@@ -41,6 +42,16 @@ help:
 	@echo "  minio.userId                - User ID to use for minio installation"
 	@echo "  minio.password                - Password to use for minio installation"
 
+# Older version of oc will raise error processing some of the commands in this make file; enforce a minimum version
+.PHONY: check-oc-version
+check-oc-version:
+	$(eval USER_OC_VERSION = $(shell oc version --client=true -o json | jq -r .clientVersion.gitVersion))
+	$(eval LOWER_OC_VERSION = $(shell echo "${MINIMUM_OC_VERSION}\n$(USER_OC_VERSION)" | sort -V | head -n 1 ))
+	@if [ $(MINIMUM_OC_VERSION) != $(LOWER_OC_VERSION) ]; then \
+		echo "Please upgrade your version of oc to at least $(MINIMUM_OC_VERSION)"; \
+		exit 1; \
+	fi
+
 # Create namespace and deploy
 namespace:
 	@oc create namespace $(NAMESPACE) &> /dev/null && oc label namespace $(NAMESPACE) modelmesh-enabled=false ||:
@@ -54,7 +65,7 @@ depend:
 	@helm dependency update $(MINIO_CHART) &> /dev/null
 
 .PHONY: install
-install: namespace depend minio-install pipeline-server-install create-dynamic-secret product-recommender-install
+install: check-oc-version namespace depend minio-install pipeline-server-install create-dynamic-secret product-recommender-install
 
 .PHONY: minio-install
 minio-install:
@@ -125,7 +136,7 @@ product-recommender-install:
 
 # Uninstall the deployment and clean up
 .PHONY: uninstall
-uninstall: delete-topics product-recommender-uninstall pipeline-server-uninstall minio-uninstall delete-project
+uninstall: check-oc-version delete-topics product-recommender-uninstall pipeline-server-uninstall minio-uninstall delete-project
 
 .PHONY: product-recommender-uninstall
 product-recommender-uninstall:
