@@ -19,6 +19,9 @@ PIPELINE_SERVER_CHART := pipeline-server
 # Do we need this??
 TOLERATIONS_TEMPLATE=[{"key":"$(1)","effect":"NoSchedule","operator":"Exists"}]
 MINIMUM_OC_VERSION = "4.17.0"
+MINIMUM_USERID_LENGTH = 3
+MINIMUM_PASSWORD_LENGTH = 8
+REQUIRED_PARAMS = minio.userId minio.password
 
 # Helm argument helpers
 helm_pgvector_args = \
@@ -52,6 +55,27 @@ check-oc-version:
 		exit 1; \
 	fi
 
+# Minio internally rejects user id and password values less than 3 and 8 characters, respectively
+# The install will fail if this occurs, so let's catch it early
+.PHONY: check-minio-credentials
+check-minio-credentials:
+	@if [ -z "$(minio.userId)" ]; then \
+		echo "Set minio.userId to a value that is at least $(MINIMUM_USERID_LENGTH) characters in length."; \
+		exit 1; \
+	fi
+	@if [ $$(wc -m <<< $(minio.userId)) -lt $$(expr $(MINIMUM_USERID_LENGTH) + 1) ]; then \
+		echo "Set minio.userId to a value that is at least $(MINIMUM_USERID_LENGTH) characters in length."; \
+		exit 1; \
+	fi
+	@if [ -z "$(minio.password)" ]; then \
+		echo "Set minio.password to a value that is at least $(MINIMUM_PASSWORD_LENGTH) characters in length."; \
+		exit 1; \
+	fi
+	@if [ $$(wc -m <<< $(minio.password)) -lt $$(expr $(MINIMUM_PASSWORD_LENGTH) + 1) ]; then \
+		echo "Set minio.password to a value that is at least $(MINIMUM_PASSWORD_LENGTH) characters in length."; \
+		exit 1; \
+	fi
+
 # Create namespace and deploy
 namespace:
 	@oc create namespace $(NAMESPACE) &> /dev/null && oc label namespace $(NAMESPACE) modelmesh-enabled=false ||:
@@ -65,7 +89,7 @@ depend:
 	@helm dependency update $(MINIO_CHART) &> /dev/null
 
 .PHONY: install
-install: check-oc-version namespace depend minio-install pipeline-server-install create-dynamic-secret product-recommender-install
+install: check-oc-version check-minio-credentials namespace depend minio-install pipeline-server-install create-dynamic-secret product-recommender-install
 
 .PHONY: minio-install
 minio-install:
