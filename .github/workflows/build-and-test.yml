@@ -93,7 +93,7 @@ jobs:
       - name: Install test dependencies
         run: |
           echo "Installing test dependencies..."
-          pip install pytest pytest-tavern httpx
+          pip install pytest tavern httpx
           sudo apt-get update
           sudo apt-get install -y jq
 
