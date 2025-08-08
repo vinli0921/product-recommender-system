@@ -21,9 +21,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: product-recommender-frontend-backend
+          - name: product-recommender-test
             context: .
-            image-name: product-recommender-frontend-backend
+            image-name: product-recommender-test
     defaults:
       run:
         working-directory: ${{ env.BACKEND_DIR }}
@@ -54,8 +54,8 @@ jobs:
           file: ${{ matrix.context }}/Containerfile
           push: true
           tags: |
-            quay.io/rh-ai-kickstart/${{ matrix.image-name }}:${{ steps.version.outputs.tag }}
-            quay.io/rh-ai-kickstart/${{ matrix.image-name }}:latest
+            quay.io/rh-ee-vli/${{ matrix.image-name }}:${{ steps.version.outputs.tag }}
+            quay.io/rh-ee-vli/${{ matrix.image-name }}:latest
           build-args: |
             IMAGE_TAG=${{ steps.version.outputs.tag }}
 
@@ -110,7 +110,7 @@ jobs:
           # Update the values.yaml to use the new image tag if needed
           # Or pass it as a Helm parameter
           make install minio.userId=${MINIO_USERID} minio.password=${MINIO_PASSWORD} \
-            EXTRA_HELM_ARGS="--set image.tag=${{ needs.build-image.outputs.image-tag }}"
+            EXTRA_HELM_ARGS="--set frontendBackendImage=quay.io/rh-ee-vli/product-recommender-test:${{ needs.build-image.outputs.image-tag }}"
         continue-on-error: false
 
       - name: Wait for deployment to be ready
