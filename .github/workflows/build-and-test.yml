@@ -112,7 +112,7 @@ jobs:
           
           # Update the values.yaml to use the new image tag if needed
           # Or pass it as a Helm parameter
-          make install minio.userId=${MINIO_USERID} minio.password=${MINIO_PASSWORD} \
+          make SHELL=/usr/bin/bash install minio.userId=${MINIO_USERID} minio.password=${MINIO_PASSWORD} \
             EXTRA_HELM_ARGS="--set frontendBackendImage=quay.io/rh-ee-vli/product-recommender-test:${{ needs.build-image.outputs.image-tag }}"
         continue-on-error: false
 
