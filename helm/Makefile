@@ -18,7 +18,7 @@ MINIO_CHART := minio
 PIPELINE_SERVER_CHART := pipeline-server
 # Do we need this??
 TOLERATIONS_TEMPLATE=[{"key":"$(1)","effect":"NoSchedule","operator":"Exists"}]
-MINIMUM_OC_VERSION = "4.17.0"
+MINIMUM_OC_VERSION = 4.17.0
 MINIMUM_USERID_LENGTH = 3
 MINIMUM_PASSWORD_LENGTH = 8
 REQUIRED_PARAMS = minio.userId minio.password
@@ -48,7 +48,7 @@ help:
 # Older version of oc will raise error processing some of the commands in this make file; enforce a minimum version
 .PHONY: check-oc-version
 check-oc-version:
-	$(eval USER_OC_VERSION = $(shell oc version --client=true -o json | jq -r .clientVersion.gitVersion))
+	$(eval USER_OC_VERSION = $(shell oc version --client=true -o json | jq -r .clientVersion.gitVersion | sed 's/^v//'))
 	$(eval LOWER_OC_VERSION = $(shell echo "${MINIMUM_OC_VERSION}\n$(USER_OC_VERSION)" | sort -V | head -n 1 ))
 	@if [ $(MINIMUM_OC_VERSION) != $(LOWER_OC_VERSION) ]; then \
 		echo "Please upgrade your version of oc to at least $(MINIMUM_OC_VERSION)"; \
