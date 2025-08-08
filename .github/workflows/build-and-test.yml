@@ -78,8 +78,9 @@ jobs:
       - name: Install OpenShift CLI
         run: |
           echo "Installing OpenShift CLI..."
-          wget https://github.com/openshift/okd/releases/download/4.17.0-0.okd-2024-12-20-070357/openshift-client-linux-4.17.0-0.okd-2024-12-20-070357.tar.gz
-          tar -xzf openshift-client-linux-4.17.0-0.okd-2024-12-20-070357.tar.gz
+          curl -sSL -o oc.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
+          tar -xzf oc.tar.gz
+          chmod +x oc kubectl
           sudo mv oc kubectl /usr/local/bin/
           oc version --client
 
@@ -92,7 +93,9 @@ jobs:
       - name: Install test dependencies
         run: |
           echo "Installing test dependencies..."
-          pip install pytest pytest-tavern httpx jq
+          pip install pytest pytest-tavern httpx
+          sudo apt-get update
+          sudo apt-get install -y jq
 
       - name: Login to OpenShift
         env:
