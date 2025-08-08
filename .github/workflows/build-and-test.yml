@@ -164,23 +164,6 @@ jobs:
           reporter: java-junit
           fail-on-error: false
 
-      - name: Collect logs on failure
-        if: failure()
-        run: |
-          echo "Collecting logs for debugging..."
-          oc logs -n ${NAMESPACE} --all-containers=true --tail=100 > pod-logs.txt || true
-          oc describe pods -n ${NAMESPACE} > pod-descriptions.txt || true
-        continue-on-error: true
-
-      - name: Upload debug logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-logs
-          path: |
-            pod-logs.txt
-            pod-descriptions.txt
-
       - name: Cleanup OpenShift deployment
         if: always()
         run: |
